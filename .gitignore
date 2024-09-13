@@ -1,16 +1,15 @@
 # .gitignore
 
 # Ignore node_modules for both backend and frontend
-backend/node_modules/
-frontend/node_modules/
+node_modules/
 
 # Ignore build and cache directories for frontend (React)
-frontend/build/
-frontend/.cache/
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
+build/
+.cache/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Ignore log files
 *.log
@@ -21,16 +20,13 @@ frontend/.env.production.local
 Thumbs.db
 
 # Ignore environment files
-backend/.env
-frontend/.env
 .env
 
 # Ignore coverage reports
 coverage/
-frontend/coverage/
 
 # Ignore other build artifacts
-backend/dist/
+dist/
 
 # Ignore IDE-specific files
 .vscode/
