@@ -1,0 +1,6 @@
+// .babelrc
+
+// helps jtest to parse no standar JS
+{
+    "presets": ["@babel/preset-env"]
+  }
