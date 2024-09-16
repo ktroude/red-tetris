@@ -15,13 +15,13 @@
     margin-bottom: 20px;
     text-transform: uppercase;
 }
-  
+
 /* Input styling */
 input {
     font-family: 'Press Start 2P', cursive; /* Retro game font */
     margin-bottom: 20px; /* Adds space below input */
     border-radius: 7px;
-    width: 250px;
+    width: 280px;
     padding: 10px;
     border: 2px solid #ff0000; /* Red neon border */
     background-color: #1a1a1a;

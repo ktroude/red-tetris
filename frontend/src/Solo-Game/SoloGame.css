@@ -1,0 +1,11 @@
+.solo-game-container{
+    height: calc(100vh - 4px);
+    width: calc(100vw - 4px);
+    background-color: #000;
+    border: 2px solid #ff0000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}

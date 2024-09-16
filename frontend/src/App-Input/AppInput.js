@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import './AppInput.css'
 
-function AppInput({ placeholder, onChange }) {
+function AppInput({ placeholder, label, onChange }) {
     return (
         <div className='AppInput-container'>
-            <label htmlFor="input" className="form-label">CREATE A ROOM</label>
+            <label htmlFor="input" className="form-label">{label}</label>
             <input
                 className='AppInput'
                 placeholder={placeholder}
