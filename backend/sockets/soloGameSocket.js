@@ -31,16 +31,19 @@ module.exports = (io) => {
 
         socket.on('movePiece', (direction) => {
             if (player && player.isPlaying) {
-                player.movePiece(direction);
 
+                let isGameOver = player.movePiece(direction);
                 // Send updated grid to the player
                 io.to(socket.id).emit('updateGrid', { grid: player.grid });
 
-                if (player.checkGameOver()) {
+                if (isGameOver) {
                     game.endGame(io, socket);
                 }
+            } else {
+                game.endGame(io, socket);
             }
         });
+        
 
         socket.on('disconnect', () => {
             console.log('Client disconnected:', socket.id);
