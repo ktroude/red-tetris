@@ -33,6 +33,7 @@ function Login() {
     return (
         <div className="app-container">
             <AppInput
+                label={"Your username"}
                 placeholder="Username"
                 onChange={handleInputChange}
             />
