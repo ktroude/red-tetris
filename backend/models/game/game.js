@@ -1,3 +1,4 @@
+//game.js
 
 class Game {
     constructor(mode) {

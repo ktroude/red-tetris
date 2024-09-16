@@ -1,18 +1,22 @@
-version: '3.8'
-
 services:
   frontend:
     build:
       context: ./frontend
     ports:
       - "3000:3000"
-    environment:
-      - HOST=0.0.0.0
     depends_on:
       - backend
+    networks:
+      - mynetwork
 
   backend:
     build:
       context: ./backend
     ports:
-      - "5000:5000"
+      - "5555:5555"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge

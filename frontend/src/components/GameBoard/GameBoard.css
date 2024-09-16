@@ -1,0 +1,30 @@
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(10, 30px);
+  grid-gap: 1px;
+  width: 300px;
+  height: 600px;
+  margin: auto;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  width: 30px;
+  height: 30px;
+  background-color: #eee;
+  border: 1px solid #ddd;
+}
+
+.cell.filled {
+  background-color: #333;
+}
+
+  .game-over {
+    color: red;
+    font-size: 24px;
+    text-align: center;
+  }
+  

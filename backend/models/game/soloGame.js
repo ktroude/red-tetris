@@ -1,3 +1,4 @@
+//soloGame.js
 
 const Game = require('./game');
 
