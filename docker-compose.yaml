@@ -1,59 +1,18 @@
-version: '3.9'
+version: '3.8'
 
 services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - HOST=0.0.0.0
+    depends_on:
+      - backend
 
   backend:
-    container_name: backend
     build:
       context: ./backend
-      dockerfile: ./Dockerfile
     ports:
-      - 8080:8080
-      - 5555:5555
-    depends_on:
-      database:
-        condition: service_healthy
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
-    networks:
-      - camagru
-
-
-  database:
-    container_name: database
-    image: postgres:12
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 10s
-      retries: 5
-    networks:
-      - camagru
-
-  frontend:
-    container_name: frontend
-    build:
-      context: ./
-      dockerfile: ./frontend/Dockerfile
-    ports:
-      - 4200:4200
-    volumes:
-      - ./frontend:/app
-    networks:
-      - camagru
-
-
-networks:
-  camagru:
-
-volumes:
-  pgdata: {}
+      - "5000:5000"

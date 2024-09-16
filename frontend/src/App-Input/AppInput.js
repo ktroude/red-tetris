@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import './AppInput.css'
 
 function AppInput({ placeholder, label, onChange }) {
