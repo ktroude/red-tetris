@@ -3,8 +3,8 @@
 class Piece {
     constructor(shape) {
         this.shape = shape; // The shape of the piece (2D matrix)
-        this.x = 0; // Horizontal position of the piece
-        this.y = 0; // Vertical position of the piece
+        this.x = 5; // Horizontal position of the piece
+        this.y = 1; // Vertical position of the piece
         this.rotation = 0; // Rotation index (0 to 3 for 4 possible orientations)
     }
 

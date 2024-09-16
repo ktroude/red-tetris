@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import io from 'socket.io-client';
 import GameBoard from '../GameBoard/GameBoard';
 import { UserContext } from '../../Context/UserContext';
+import './SoloGame.css'
 
 function SoloGame() {
   const { username } = useContext(UserContext);
@@ -75,8 +76,8 @@ function SoloGame() {
         default:
           return;
       }
-      console.log('piece moved:', direction);
-      socket.emit('movePiece', direction);
+      console.log('Piece moved:', direction);
+      socket.emit('movePiece', direction); // Emit the direction to move the piece
     };
 
     document.addEventListener('keydown', handleKeyPress);
@@ -86,7 +87,7 @@ function SoloGame() {
   }, [socket]);
 
   return (
-    <div>
+    <div className='solo-game-container'>
       <GameBoard grid={grid} />
       {gameOver && <div className="game-over">Game Over</div>}
     </div>

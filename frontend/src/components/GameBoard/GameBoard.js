@@ -4,20 +4,43 @@ import './GameBoard.css';
 const GameBoard = ({ grid }) => {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 30px)` }}>
-      {grid.flat().map((cell, index) => (
-        <div
-          key={index}
-          style={{
-            width: '30px',
-            height: '30px',
-            backgroundColor: cell === 0 ? 'white' : 'black',
-            border: '1px solid gray',
-          }}
-        />
-      ))}
+      {grid.flat().map((cell, index) => {
+        let className;
+
+        switch (cell) {
+          case 0:
+            className = 'empty-cell';
+            break;
+          case 1:
+            className = 'cyan';
+            break;
+          case 2:
+            className = 'blue';
+            break;
+          case 3:
+            className = 'orange';
+            break;
+          case 4:
+            className = 'yellow';
+            break;
+          case 5:
+            className = 'green';
+            break;
+          case 6:
+            className = 'purple';
+            break;
+          case 7:
+            className = 'red';
+            break;
+          default:
+            className = 'empty-cell';  // Default case if something unexpected happens
+            break;
+        }
+
+        return <div key={index} className={className} />;
+      })}
     </div>
   );
 };
-
 
 export default GameBoard;

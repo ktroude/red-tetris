@@ -5,34 +5,45 @@ const Player = require('../models/player');
 
 module.exports = (io) => {
     io.on('connection', (socket) => {
-        console.log(`Player connected with ID: ${socket.id}`);
+        console.log('New client connected:', socket.id);
+        
+        let player = null;
+        let game = null;
 
         socket.on('joinSoloGame', (data) => {
             const { playerName } = data;
-            console.log('joinSoloGame : ', data);
-            const player = new Player(socket.id, playerName);
-            const game = new SoloGame();
+            console.log(`${playerName} joined solo game`);
 
-            game.addPlayer(player);
-            socket.emit('init', { playerId: player.id, playerName: player.name, grid: player.grid });
+            player = new Player(socket.id, playerName);
+            game = new SoloGame(player);
 
-            socket.on('movePiece', (moveData) => {
-                console.log('piece mooved: ', moveData);
-                player.movePiece(moveData.direction);
+            // Generate first piece for the player
+            player.generateNewPiece();
 
-                if (game.handleGameOver(player)) {
-                    socket.emit('gameOver', { message: 'Game Over!' });
+            // Send initial grid to the player
+            socket.emit('init', { grid: player.grid });
+
+            // Start game loop if it's not already running
+            if (!game.isRunning) {
+                game.startGameLoop(io, socket);
+            }
+        });
+
+        socket.on('movePiece', (direction) => {
+            if (player && player.isPlaying) {
+                player.movePiece(direction);
+
+                // Send updated grid to the player
+                io.to(socket.id).emit('updateGrid', { grid: player.grid });
+
+                if (player.checkGameOver()) {
+                    game.endGame(io, socket);
                 }
-                else {
-                    socket.emit('updateGrid', { playerId: player.id, grid: player.grid });
-                }
-            });
+            }
+        });
 
-            socket.on('disconnect', () => {
-                console.log(`Player ${player.name} disconnected`);
-                console.log(`Socket ${socket.id} disconnected`);
-                game.removePlayer(socket.id);
-            });
+        socket.on('disconnect', () => {
+            console.log('Client disconnected:', socket.id);
         });
     });
 };

@@ -1,24 +1,32 @@
-//soloGame.js
-
-const Game = require('./game');
-
-class SoloGame extends Game {
-    constructor() {
-        super('solo');
+class SoloGame {
+    constructor(player) {
+        this.player = player;
+        this.isRunning = false;
+        this.gameInterval = null;
     }
 
-    start() {
-        this.interval = setInterval(() => {
-            this.increaseSpeed();
-        }, 30000); // Increase speed every 30s
+    startGameLoop(io, socket) {
+        this.isRunning = true;
+        const gameSpeed = 1000;
+
+        this.gameInterval = setInterval(() => {
+            if (this.player.isPlaying && !this.player.isUpdating) {
+                this.player.movePiece('down');
+
+                io.to(socket.id).emit('updateGrid', { grid: this.player.grid });
+
+                if (this.player.checkGameOver()) {
+                    console.log("game over sent");
+                    this.endGame(io, socket);
+                }
+            }
+        }, gameSpeed);
     }
 
-    handleGameOver(player) {
-        if (player.checkGameOver()) {
-            this.stop();
-            return true;
-        }
-        return false;
+    endGame(io, socket) {
+        this.isRunning = false;
+        clearInterval(this.gameInterval);
+        io.to(socket.id).emit('gameOver', { message: 'Game Over' });
     }
 }
 
