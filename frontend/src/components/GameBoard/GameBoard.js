@@ -33,7 +33,7 @@ const GameBoard = ({ grid }) => {
             className = 'red';
             break;
           default:
-            className = 'empty-cell';  // Default case if something unexpected happens
+            className = 'empty-cell'; // Default case if something unexpected happens
             break;
         }
 

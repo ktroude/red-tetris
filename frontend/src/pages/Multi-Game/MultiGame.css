@@ -1,0 +1,34 @@
+.multi-game-container{
+    height: calc(100vh - 4px);
+    width: calc(100vw - 4px);
+    background-color: #000;
+    border: 2px solid #ff0000;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.next-piece {
+    display: grid;
+    grid-template-columns: repeat(4, 30px);
+    margin-top: 10px;
+}
+
+.win{
+    color: rgb(89, 172, 7);
+}
+
+.player-section, .opponent-section {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+  
+.game-over {
+    color: red;
+    font-size: 24px;
+    font-weight: bold;
+}

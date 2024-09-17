@@ -16,7 +16,7 @@ function SoloGame() {
   }
 
   useEffect(() => {
-    const newSocket = io("http://c4r1p3:5555");
+    const newSocket = io("http://c2r11p2:5555");
     setSocket(newSocket);
 
     console.log('Socket connected:', newSocket.id);
@@ -28,33 +28,29 @@ function SoloGame() {
 
   useEffect(() => {
     if (socket && username) {
-      console.log('Username:', username);
       socket.emit('joinSoloGame', { playerName: username });
 
-      socket.on('init', (data) => {
-        console.log('Init data received:', data);
+      socket.on('initSolo', (data) => {
         setGrid(data.grid);
       });
 
-      socket.on('updateGrid', (data) => {
-        console.log('Grid update received:', data);
+      socket.on('updateGridSolo', (data) => {
         setGrid(data.grid);
       });
 
-      socket.on('nextPiece', (data) => {
+      socket.on('nextPieceSolo', (data) => {
         setNextPiece(data.nextPiece);
       });
 
-      socket.on('gameOver', (data) => {
-        console.log('Game Over event received:', data);
+      socket.on('gameOverSolo', () => {
         setGameOver(true);
       });
 
       return () => {
         socket.off('init');
-        socket.off('updateGrid');
-        socket.off('nextPiece');
-        socket.off('gameOver');
+        socket.off('updateGridSolo');
+        socket.off('nextPieceSolo');
+        socket.off('gameOverSolo');
       };
     }
   }, [socket, username]);
@@ -72,7 +68,7 @@ function SoloGame() {
           break;
         case 'ArrowDown':
           direction = 'down';
-          break;grid={nextPiece}
+          break;
         case 'ArrowUp':
           direction = 'rotate';
           break;
@@ -82,8 +78,7 @@ function SoloGame() {
         default:
           return;
       }
-      console.log('Piece moved:', direction);
-      socket.emit('movePiece', direction); // Emit the direction to move the piece
+      socket.emit('movePieceSolo', direction);
     };
 
     document.addEventListener('keydown', handleKeyPress);

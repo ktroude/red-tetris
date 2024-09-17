@@ -19,19 +19,19 @@ function Home() {
         setIsMultiChoosen(true);
     }
 
-    function checkUserName(username) {
+    function checkUsername(username) {
         const regex = /^[a-zA-Z0-9]{2,15}$/;
         return regex.test(username);
     }
 
-    function navigateToMulti(name) {
-        if (name.length > 0 && checkUserName(name)) {
-            navigate(`/multi/${name}`);
+    function navigateToMulti() {
+        if (roomName.length > 0 && checkUsername(roomName)) {
+            navigate(`/multi/${roomName}/${username}`);
         }
     }
 
     function navigateToSolo() {
-        if (username.length > 0 && checkUserName(username)) {
+        if (username.length > 0 && checkUsername(username)) {
             console.log("NAV SOLO ", username);
             navigate(`/solo/${username}`);
         }
@@ -50,12 +50,17 @@ function Home() {
             {isMultiChoosen && (
                 <>
                     <AppInput
-                        label="Join an opponent"
-                        placeholder={"Opponent username"}
+                        label="Join a room"
+                        placeholder={"Room name to join"}
                         onChange={(event) => handleInputChange(setRoomName, event)}
                     />
                     <AppButton onClick={() => navigateToMulti(roomName)}>JOIN</AppButton>
-                    <p className='form-label'>OR CREATE YOUR GAME</p>
+                    <div className='space'/>
+                    <AppInput
+                        label="Or create a room"
+                        placeholder={"Room name to create"}
+                        onChange={(event) => handleInputChange(setRoomName, event)}
+                    />
                     <AppButton onClick={() => navigateToMulti(username)}>CREATE</AppButton>
                 </>
             )}

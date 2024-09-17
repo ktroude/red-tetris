@@ -10,7 +10,6 @@ class Player {
         this.nextPieces = []; // the queue of next pieces
         this.score = 0; // useless for now
         this.isPlaying = true;
-
         this.fillPieceQueue();
     }
 
@@ -21,7 +20,7 @@ class Player {
     }
 
     fillPieceQueue() {
-        while (this.nextPieces.length < 3) {  // Ajoute jusqu'à 3 pièces dans la file d'attente
+        while (this.nextPieces.length < 3) {
             const randomShape = Object.keys(SHAPES)[Math.floor(Math.random() * Object.keys(SHAPES).length)];
             this.nextPieces.push(new Piece(SHAPES[randomShape]));
         }
@@ -32,18 +31,18 @@ class Player {
     }
 
     movePiece(direction) {
+
         if (!this.currentPiece) return;
-    
+
         let piece = this.currentPiece;
         let { x, y } = piece;
-        let isGameEnded = false;
         // Save the piece's previous position
         const previousX = x;
         const previousY = y;
-    
+
         // Clear the previous position of the piece from the grid
         this.clearPieceFromGrid(piece);
-    
+
         // Update the piece's position based on the direction
         switch (direction) {
             case 'left':
@@ -86,10 +85,10 @@ class Player {
                 this.placePiece(piece);
                 this.clearFullLines();
                 this.generateNewPiece();
+                return this.checkGameOver();
             }
         }
     }
-
 
     isValidPosition(piece) {
         const matrix = piece.getMatrix();
@@ -128,6 +127,7 @@ class Player {
     }    
 
     clearPieceFromGrid(piece) {
+        console.log("piece cleared");
         const matrix = piece.getMatrix();
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
@@ -183,19 +183,17 @@ class Player {
     }
 
     checkGameOver() {
-        // Check the top row of the grid to see if it's completely blocked
         for (let col = 0; col < this.grid[0].length; col++) {
-            // If any cell in the top row is filled
             if (this.grid[0][col] !== 0) {
-                // Check if there is space for a new piece to spawn
                 if (this.grid[1] && this.grid[1][col] !== 0) {
                     console.log("Game Over: Top row blocked and no space for new pieces.");
-                    return true;  // If the cell below is also filled, game over
+                    return true;
                 }
             }
         }
         return false;
     }
+    
     
 }
 

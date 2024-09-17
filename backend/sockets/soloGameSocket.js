@@ -21,9 +21,9 @@ module.exports = (io) => {
             player.generateNewPiece();
 
             // Send initial grid to the player
-            io.to(socket.id).emit('init', { grid: player.grid });
+            io.to(socket.id).emit('initSolo', { grid: player.grid });
 
-            socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
+            socket.emit('nextPieceSolo', { nextPiece: player.nextPieces[0].shape });
 
             // Start game loop if it's not already running
             if (!game.isRunning) {
@@ -31,23 +31,23 @@ module.exports = (io) => {
             }
         });
 
-        socket.on('movePiece', (direction) => {
+        socket.on('movePieceSolo', (direction) => {
             if (player && player.isPlaying) {
 
                 let isGameOver = player.movePiece(direction);
                 // Send updated grid to the player
-                io.to(socket.id).emit('updateGrid', { grid: player.grid });
+                io.to(socket.id).emit('updateGridSolo', { grid: player.grid });
 
-                socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
+                socket.emit('nextPieceSolo', { nextPiece: player.nextPieces[0].shape });
 
                 if (isGameOver) {
                     game.endGame(io, socket);
                 }
             } else {
+                io.to(socket.id).emit('gameOverSolo', { message: 'Game Over' });
                 game.endGame(io, socket);
             }
         });
-        
 
         socket.on('disconnect', () => {
             console.log('Client disconnected:', socket.id);

@@ -14,7 +14,7 @@ class SoloGame {
             if (this.player.isPlaying) {
                 isGameOver = this.player.movePiece('down');
 
-                io.to(socket.id).emit('updateGrid', { grid: this.player.grid });
+                io.to(socket.id).emit('updateGridSolo', { grid: this.player.grid });
 
                 if (isGameOver) {
                     this.endGame(io, socket);
@@ -27,7 +27,7 @@ class SoloGame {
         this.isRunning = false;
         this.player.isPlaying = false;
         clearInterval(this.gameInterval);
-        io.to(socket.id).emit('gameOver', { message: 'Game Over' });
+        io.to(socket.id).emit('gameOverSolo', { message: 'Game Over' });
     }
 }
 
