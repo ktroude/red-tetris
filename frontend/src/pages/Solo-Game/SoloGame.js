@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import io from 'socket.io-client';
-import GameBoard from '../GameBoard/GameBoard';
+import GameBoard from '../../components/GameBoard/GameBoard';
 import { UserContext } from '../../Context/UserContext';
 import './SoloGame.css'
 

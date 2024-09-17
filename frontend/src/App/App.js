@@ -4,7 +4,7 @@ import { UserProvider } from '../Context/UserContext';
 import Login from '../pages/Login/Login';
 import Home from '../pages/Home/Home';
 import ProtectedRoute from '../Guard/ProtectedRoute';
-import SoloGame from '../components/Solo-Game/SoloGame';
+import SoloGame from '../pages/Solo-Game/SoloGame';
 
 function App() {
   return (

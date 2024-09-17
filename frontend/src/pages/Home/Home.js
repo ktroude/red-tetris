@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
-import AppButton from '../../components-utils/App-Button/AppButton';
-import AppInput from '../../components-utils/App-Input/AppInput';
+import AppButton from '../../components/App-Button/AppButton';
+import AppInput from '../../components/App-Input/AppInput';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../Context/UserContext';
 import './Home.css';
