@@ -9,13 +9,14 @@ function SoloGame() {
   const [grid, setGrid] = useState(createEmptyGrid());
   const [gameOver, setGameOver] = useState(false);
   const [socket, setSocket] = useState(null);
+  const [nextPiece, setNextPiece] = useState(null);
 
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
   }
 
   useEffect(() => {
-    const newSocket = io("http://c4r1p4:5555");
+    const newSocket = io("http://c4r1p3:5555");
     setSocket(newSocket);
 
     console.log('Socket connected:', newSocket.id);
@@ -40,6 +41,10 @@ function SoloGame() {
         setGrid(data.grid);
       });
 
+      socket.on('nextPiece', (data) => {
+        setNextPiece(data.nextPiece);
+      });
+
       socket.on('gameOver', (data) => {
         console.log('Game Over event received:', data);
         setGameOver(true);
@@ -48,6 +53,7 @@ function SoloGame() {
       return () => {
         socket.off('init');
         socket.off('updateGrid');
+        socket.off('nextPiece');
         socket.off('gameOver');
       };
     }
@@ -66,7 +72,7 @@ function SoloGame() {
           break;
         case 'ArrowDown':
           direction = 'down';
-          break;
+          break;grid={nextPiece}
         case 'ArrowUp':
           direction = 'rotate';
           break;
@@ -89,7 +95,12 @@ function SoloGame() {
   return (
     <div className='solo-game-container'>
       <GameBoard grid={grid} />
-      {gameOver && <div className="game-over">Game Over</div>}
+          {nextPiece && (
+            <div className="next-piece">
+              <GameBoard grid={nextPiece} />
+            </div>
+          )}
+      {gameOver && <p className="game-over">Game Over</p>}
     </div>
   );
 }

@@ -3,18 +3,28 @@ const SHAPES = require('./piece/shapes');
 
 class Player {
     constructor(id, name) {
-        this.id = id;
-        this.name = name;
-        this.grid = this.createEmptyGrid();
-        this.currentPiece = null;
-        this.score = 0;
+        this.id = id;   // socket id
+        this.name = name; // username
+        this.grid = this.createEmptyGrid(); // the tetris grid
+        this.currentPiece = null; // the piece the user is using
+        this.nextPieces = []; // the queue of next pieces
+        this.score = 0; // useless for now
         this.isPlaying = true;
+
+        this.fillPieceQueue();
     }
 
     createEmptyGrid() {
         const rows = 20;
         const cols = 10;
         return Array.from({ length: rows }, () => Array(cols).fill(0));
+    }
+
+    fillPieceQueue() {
+        while (this.nextPieces.length < 3) {  // Ajoute jusqu'à 3 pièces dans la file d'attente
+            const randomShape = Object.keys(SHAPES)[Math.floor(Math.random() * Object.keys(SHAPES).length)];
+            this.nextPieces.push(new Piece(SHAPES[randomShape]));
+        }
     }
 
     setPiece(piece) {
@@ -116,7 +126,6 @@ class Player {
             }
         }
     }    
-    
 
     clearPieceFromGrid(piece) {
         const matrix = piece.getMatrix();
@@ -128,7 +137,6 @@ class Player {
             }
         }
     }
-    
 
     placePiece(piece) {
         console.log("piece placed");
@@ -163,10 +171,11 @@ class Player {
     }
 
     generateNewPiece() {
-        const randomShape = Object.keys(SHAPES)[Math.floor(Math.random() * Object.keys(SHAPES).length)];
-        this.currentPiece = new Piece(SHAPES[randomShape]);
+        this.currentPiece = this.nextPieces.shift();
         this.currentPiece.x = Math.floor(this.grid[0].length / 2) - Math.floor(this.currentPiece.getMatrix()[0].length / 2);
         this.currentPiece.y = 0;
+
+        this.fillPieceQueue();
 
         if (!this.isValidPosition(this.currentPiece)) {
             this.isPlaying = false;
