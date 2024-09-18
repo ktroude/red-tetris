@@ -36,18 +36,15 @@ class MultiGame {
 
                 if (player.id === this.owner?.id) {
                     isGameOver = this.owner.movePiece('down');
-                    console.table("owner grid: ", this.owner.grid);
-                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.grid });
                     io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
+                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.grid });
                 }
-                else if (player.id === this.opponent?.id) {
+                if (player.id === this.opponent?.id) {
                     isGameOver = this.opponent.movePiece('down');
-                    console.table("opponent grid: ", this.opponent.grid);
-                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.grid });
                     io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
+                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.grid });
                 }
 
-                console.log('grid updated for socket: ', player.id);
                 if (isGameOver) {
                     if (player.id === this.owner?.id){
                         io.to(this.owner.id).emit('gameOver');
@@ -59,6 +56,7 @@ class MultiGame {
                         return;
                     }
                     this.isRunning = false;
+                    console.log('GAME OVER SEND');
                 }
 
             }

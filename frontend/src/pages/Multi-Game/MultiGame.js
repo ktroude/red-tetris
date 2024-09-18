@@ -27,11 +27,11 @@ function MultiGame() {
     if (roomName) {
       setRoomname(roomName);
     }
-  }, [roomName]);
+  }, []);
 
   useEffect(() => {
     if (socket === null) {
-      const newSocket = io("http://c2r11p2:5555");
+      const newSocket = io("http://c4r1p6:5555");
       setSocket(newSocket);
       
       console.log('Socket connected:', newSocket.id);
@@ -68,13 +68,11 @@ function MultiGame() {
 
       // Update the grid
       socket.on('updateGrid', (data) => {
-        console.log("grid updated", data);
         setGrid(data.grid);
       });
 
       // Update the opponent's grid
       socket.on('opponentUpdateGrid', (data) => {
-        console.log("opponent's grid updated", data);
         setOpponentGrid(data.grid);
       });
 
@@ -107,15 +105,19 @@ function MultiGame() {
 
       return () => {
         socket.off('init');
+        socket.off('GameReady');
         socket.off('updateGrid');
+        socket.off('isOwner');
+        socket.off('roomFull');
         socket.off('opponentUpdateGrid');
         socket.off('nextPiece');
         socket.off('opponentJoined');
+        socket.off('ownerIsHere');
         socket.off('gameOver');
         socket.off('win');
       };
     }
-  }, [socket, username, roomname, isOwner]);
+  }, [socket]);
 
   // Handle movement
   useEffect(() => {

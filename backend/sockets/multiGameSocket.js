@@ -89,13 +89,15 @@ module.exports = (io) => {
             socket.on('disconnect', () => {
                 if (game.opponent && player.id === game.opponent.id) {
                     game.removeOpponent();
-                    console.log(`Player ${socket.id} disconnected from room ${roomId}`);
+                    console.log(`Opponent ${socket.id} disconnected from room ${roomId}`);
                 } 
                 if (game.owner && player.id === game.owner.id) {
                     game.removeOwner();
                     game.removeOpponent();
                     rooms[requestedRoom] = null;
+                    console.log(`Owner ${socket.id} disconnected and room ${roomId} is closed.`);
                 }
+                console.log(`Client disconnected: ${socket.id}`);
             });
         });
     });

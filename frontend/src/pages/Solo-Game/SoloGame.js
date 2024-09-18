@@ -16,7 +16,7 @@ function SoloGame() {
   }
 
   useEffect(() => {
-    const newSocket = io("http://c2r11p2:5555");
+    const newSocket = io("http://c4r1p6:5555");
     setSocket(newSocket);
 
     console.log('Socket connected:', newSocket.id);
@@ -47,7 +47,7 @@ function SoloGame() {
       });
 
       return () => {
-        socket.off('init');
+        socket.off('initSolo');
         socket.off('updateGridSolo');
         socket.off('nextPieceSolo');
         socket.off('gameOverSolo');
