@@ -54,14 +54,7 @@ function Home() {
                         placeholder={"Room name to join"}
                         onChange={(event) => handleInputChange(setRoomName, event)}
                     />
-                    <AppButton onClick={() => navigateToMulti(roomName)}>JOIN</AppButton>
-                    <div className='space'/>
-                    <AppInput
-                        label="Or create a room"
-                        placeholder={"Room name to create"}
-                        onChange={(event) => handleInputChange(setRoomName, event)}
-                    />
-                    <AppButton onClick={() => navigateToMulti(username)}>CREATE</AppButton>
+                    <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
                 </>
             )}
         </div>
