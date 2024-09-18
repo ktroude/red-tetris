@@ -183,11 +183,14 @@ class Player {
     }
 
     checkGameOver() {
+        // Check the top row of the grid to see if it's completely blocked
         for (let col = 0; col < this.grid[0].length; col++) {
+            // If any cell in the top row is filled
             if (this.grid[0][col] !== 0) {
+                // Check if there is space for a new piece to spawn
                 if (this.grid[1] && this.grid[1][col] !== 0) {
                     console.log("Game Over: Top row blocked and no space for new pieces.");
-                    return true;
+                    return true;  // If the cell below is also filled, game over
                 }
             }
         }

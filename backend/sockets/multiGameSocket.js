@@ -53,8 +53,7 @@ module.exports = (io) => {
             socket.on('gameStart', () => {
                     console.log('game started');
                     game.distributePieces();
-                    game.startGameLoop(io, game.opponent);
-                    game.startGameLoop(io, game.owner);
+                    game.startGameLoop(io, player);
             });
 
             socket.on('movePiece', (direction) => {

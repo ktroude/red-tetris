@@ -31,13 +31,11 @@ function MultiGame() {
 
   useEffect(() => {
     if (socket === null) {
-      const newSocket = io("http://c4r1p6:5555");
-      setSocket(newSocket);
-      
-      console.log('Socket connected:', newSocket.id);
+      setSocket(io("http://c4r1p6:5555"));
       
       return () => {
-        newSocket.disconnect();
+        socket.disconnect();
+        setSocket(null);
       };
     }
   }, []);
