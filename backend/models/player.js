@@ -1,24 +1,45 @@
 const Piece = require('./piece/piece');
 const SHAPES = require('./piece/shapes');
 
+/**
+ * Represents a player in the Tetris game. Manages the player's state, grid, and active/next pieces.
+ * Handles actions such as piece movement, line clearing, and game-over checks.
+ */
 class Player {
-    constructor(id, name) {
-        this.id = id;   // socket id
-        this.name = name; // username
-        this.grid = this.createEmptyGrid(); // the tetris grid
-        this.currentPiece = null; // the piece the user is using
-        this.nextPieces = []; // the queue of next pieces
-        this.score = 0; // useless for now
-        this.isPlaying = true;
-        this.fillPieceQueue();
+    /**
+     * Initializes a new instance of the Player class.
+     * 
+     * @param {string} id - The unique identifier for the player (typically the socket ID).
+     * @param {string} name - The name of the player.
+     * @param {boolean} isMulti - Indicates whether the player is in a multiplayer game.
+     */
+    constructor(id, name, isMulti = false) {
+        this.isMulti = isMulti; // used for pieces generation in multiplayer mode
+        this.id = id;   // player's socket id
+        this.name = name; // player's username
+        this.grid = this.createEmptyGrid(); // player's Tetris grid
+        this.currentPiece = null; // the piece currently being controlled by the player
+        this.nextPieces = []; // queue of upcoming pieces
+        this.score = 0; // unused for now, potentially for future scoring system
+        this.isPlaying = true; // indicates if the player is actively playing the game
+        this.fillPieceQueue(); // fills the piece queue at initialization
     }
 
+    /**
+     * Creates an empty Tetris grid with the standard 20 rows and 10 columns.
+     * 
+     * @returns {Array<Array<number>>} A 2D array representing the empty grid.
+     */
     createEmptyGrid() {
         const rows = 20;
         const cols = 10;
         return Array.from({ length: rows }, () => Array(cols).fill(0));
     }
 
+    /**
+     * Fills the player's queue of upcoming pieces with random shapes.
+     * Ensures the queue always has at least 3 pieces.
+     */
     fillPieceQueue() {
         while (this.nextPieces.length < 3) {
             const randomShape = Object.keys(SHAPES)[Math.floor(Math.random() * Object.keys(SHAPES).length)];
@@ -26,24 +47,33 @@ class Player {
         }
     }
 
+    /**
+     * Sets the current piece for the player to the specified piece.
+     * 
+     * @param {Piece} piece - The piece to set as the current active piece.
+     */
     setPiece(piece) {
         this.currentPiece = piece;
     }
 
+    /**
+     * Moves the current piece in the specified direction and updates the player's grid.
+     * Handles rotation, normal movement (left, right, down), and "hard drop" (space bar).
+     * 
+     * @param {string} direction - The direction to move the piece ('left', 'right', 'down', 'rotate', 'space').
+     * @returns {boolean} Returns true if the game is over, false otherwise.
+     */
     movePiece(direction) {
-
         if (!this.currentPiece) return;
 
         let piece = this.currentPiece;
         let { x, y } = piece;
-        // Save the piece's previous position
         const previousX = x;
         const previousY = y;
 
-        // Clear the previous position of the piece from the grid
         this.clearPieceFromGrid(piece);
 
-        // Update the piece's position based on the direction
+        // Update piece position based on direction
         switch (direction) {
             case 'left':
                 piece.moveLeft();
@@ -57,31 +87,24 @@ class Player {
             case 'rotate':
                 piece.rotate();
                 break;
-            case 'space':  // Special case: Move the piece straight to the bottom
+            case 'space':
                 while (this.isValidPosition(piece)) {
-                    piece.moveDown(); // Move down as far as possible
+                    piece.moveDown();
                 }
-                // Revert to the last valid position
-                piece.y -= 1;
+                piece.y -= 1;  // Revert to the last valid position
                 this.placePiece(piece);
                 this.clearFullLines();
                 this.generateNewPiece();
                 return this.checkGameOver();
         }
 
-        // Check if the new position is valid
-
-        console.log("position de la piece: ", this.isValidPosition(piece));
-
+        // Validate the new position
         if (this.isValidPosition(piece)) {
-            // Position is valid, update the grid
             this.updateGrid(piece);
         } else {
-            // Revert to previous position if invalid
             piece.x = previousX;
             piece.y = previousY;
             if (direction === 'down') {
-                // Piece has settled, place it in the grid and generate a new piece
                 this.placePiece(piece);
                 this.clearFullLines();
                 this.generateNewPiece();
@@ -90,21 +113,26 @@ class Player {
         }
     }
 
+    /**
+     * Checks if the current piece is in a valid position within the grid.
+     * 
+     * @param {Piece} piece - The piece to validate.
+     * @returns {boolean} Returns true if the piece is in a valid position, false otherwise.
+     */
     isValidPosition(piece) {
         const matrix = piece.getMatrix();
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
-                // Only check cells that are part of the piece (non-zero values)
                 if (matrix[r][c] !== 0) {
                     const gridX = piece.x + c;
                     const gridY = piece.y + r;
-    
-                    // Check if the piece is out of the grid bounds or if it collides with another block
+
+                    // Check if the piece is out of bounds or colliding with another block
                     if (
-                        gridX < 0 ||                           // Out of the grid (left side)
-                        gridX >= this.grid[0].length ||        // Out of the grid (right side)
-                        gridY >= this.grid.length ||           // Below the grid (bottom)
-                        (gridY >= 0 && this.grid[gridY][gridX]) // Collision with another block
+                        gridX < 0 || 
+                        gridX >= this.grid[0].length || 
+                        gridY >= this.grid.length || 
+                        (gridY >= 0 && this.grid[gridY][gridX])
                     ) {
                         return false;
                     }
@@ -113,8 +141,12 @@ class Player {
         }
         return true;
     }
-    
 
+    /**
+     * Updates the player's grid with the current piece's position.
+     * 
+     * @param {Piece} piece - The piece to place on the grid.
+     */
     updateGrid(piece) {
         const matrix = piece.getMatrix();
         for (let r = 0; r < matrix.length; r++) {
@@ -124,10 +156,14 @@ class Player {
                 }
             }
         }
-    }    
+    }
 
+    /**
+     * Clears the current piece from the grid by setting its cells to 0.
+     * 
+     * @param {Piece} piece - The piece to remove from the grid.
+     */
     clearPieceFromGrid(piece) {
-        console.log("piece cleared");
         const matrix = piece.getMatrix();
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
@@ -138,8 +174,12 @@ class Player {
         }
     }
 
+    /**
+     * Places the current piece permanently on the grid.
+     * 
+     * @param {Piece} piece - The piece to place on the grid.
+     */
     placePiece(piece) {
-        console.log("piece placed");
         const matrix = piece.getMatrix();
         for (let r = 0; r < matrix.length; r++) {
             for (let c = 0; c < matrix[r].length; c++) {
@@ -150,6 +190,11 @@ class Player {
         }
     }
 
+    /**
+     * Clears full lines from the grid and shifts the remaining lines down.
+     * 
+     * @returns {number} The number of lines cleared.
+     */
     clearFullLines() {
         const rowsToClear = this.grid.reduce((acc, row, index) => {
             if (row.every(cell => cell !== 0)) {
@@ -165,39 +210,44 @@ class Player {
             while (this.grid.length < 20) {
                 this.grid.unshift(Array(10).fill(0));
             }
-            return rowsCleared;
         }
-        return 0;
+
+        return rowsCleared;
     }
 
+    /**
+     * Generates a new piece for the player and updates the piece queue.
+     * Ends the game if no valid position is available for the new piece.
+     */
     generateNewPiece() {
         this.currentPiece = this.nextPieces.shift();
-        this.currentPiece.x = Math.floor(this.grid[0].length / 2) - Math.floor(this.currentPiece.getMatrix()[0].length / 2);
+        this.currentPiece.x = 5;
         this.currentPiece.y = 0;
 
-        this.fillPieceQueue();
+        if (!this.isMulti) {
+            this.fillPieceQueue();
+        }
 
         if (!this.isValidPosition(this.currentPiece)) {
-            this.isPlaying = false;
+            this.isPlaying = false; // Game over if the new piece has no valid position
         }
     }
 
+    /**
+     * Checks if the game is over by inspecting the top row of the grid.
+     * 
+     * @returns {boolean} Returns true if the game is over, false otherwise.
+     */
     checkGameOver() {
-        // Check the top row of the grid to see if it's completely blocked
         for (let col = 0; col < this.grid[0].length; col++) {
-            // If any cell in the top row is filled
             if (this.grid[0][col] !== 0) {
-                // Check if there is space for a new piece to spawn
                 if (this.grid[1] && this.grid[1][col] !== 0) {
-                    console.log("Game Over: Top row blocked and no space for new pieces.");
-                    return true;  // If the cell below is also filled, game over
+                    return true;  // Game over if the top two rows are blocked
                 }
             }
         }
         return false;
     }
-    
-    
 }
 
 module.exports = Player;

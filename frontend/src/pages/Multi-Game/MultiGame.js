@@ -32,7 +32,7 @@ function MultiGame() {
   useEffect(() => {
     if (socket === null) {
       setSocket(io("http://c4r1p6:5555"));
-      
+
       return () => {
         socket.disconnect();
         setSocket(null);
