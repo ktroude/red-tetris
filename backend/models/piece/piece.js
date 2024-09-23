@@ -54,8 +54,7 @@ class Piece {
         this.rotation = (this.rotation + 1) % 4;
     }
 
-    // Méthodes pour déplacer la pièce
-    moveLeft() {
+        moveLeft() {
         this.x -= 1;
     }
 
