@@ -10,6 +10,7 @@ function SoloGame() {
   const [gameOver, setGameOver] = useState(false);
   const [socket, setSocket] = useState(null);
   const [nextPiece, setNextPiece] = useState(null);
+  const [score, setScore] = useState(0);
   const apiUrl = process.env.REACT_APP_API_URL;
 
   function createEmptyGrid() {
@@ -37,6 +38,10 @@ function SoloGame() {
 
       socket.on('updateGridSolo', (data) => {
         setGrid(data.grid);
+      });
+
+      socket.on('scoreSolo', (data) => {
+        setScore(data.score);
       });
 
       socket.on('nextPieceSolo', (data) => {
@@ -96,6 +101,7 @@ function SoloGame() {
               <GameBoard grid={nextPiece} />
             </div>
           )}
+          <h3>Score: {score}</h3>
       {gameOver && <p className="game-over">Game Over</p>}
     </div>
   );

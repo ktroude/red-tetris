@@ -45,7 +45,8 @@ module.exports = (io) => {
             // Start the game loop if it's not running
             if (!game.isRunning) {
                 game.startGameLoop(io, socket);
-            }
+                io.to(socket.id).emit('scoreSolo', { score: player.score });
+        }
         });
 
         /**
@@ -83,6 +84,7 @@ module.exports = (io) => {
                 io.to(socket.id).emit('gameOverSolo', { message: 'Game Over' });
                 game.endGame(io, socket);
             }
+            io.to(socket.id).emit('scoreSolo', { score: player.score });
         });
 
         /**

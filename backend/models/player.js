@@ -198,6 +198,7 @@ class Player {
                 }
             }
         }
+        this.score += 10;
     }
 
     /**
@@ -221,10 +222,10 @@ class Player {
                 this.grid.unshift(Array(10).fill(0));
             }
         }
-        if (rowsCleared > 0) {
-            console.log('rowsCleared = ', rowsCleared);
+        for (let i = 0; i < rowsCleared; i++) {
+            this.score += 1000;
         }
-    
+
         return rowsCleared;
     }
     

@@ -14,4 +14,11 @@
     display: grid;
     grid-template-columns: repeat(4, 30px);
 }
+
+h3 {
+    font-family: 'Press Start 2P', cursive;
+    color: aliceblue;
+    font-size: 24px;
+    font-weight: bold;
+}
   
