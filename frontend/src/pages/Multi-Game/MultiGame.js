@@ -18,6 +18,7 @@ function MultiGame() {
   const [roomname, setRoomname] = useState("");
   const [isOwner, setIsOwner] = useState(false);
   const [isRoomFull, setIsRoomFull] = useState(false);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
@@ -31,7 +32,7 @@ function MultiGame() {
 
   useEffect(() => {
     if (socket === null) {
-      setSocket(io("http://c4r1p6:5555"));
+      setSocket(io(apiUrl));
 
       return () => {
         socket.disconnect();

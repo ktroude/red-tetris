@@ -53,7 +53,7 @@ module.exports = (io) => {
             }
             
             // If an owner exists, assign the player as the opponent
-            if (game.owner !== null && player.id !== game.owner.id && game.opponent === null) {
+            if (game.owner !== null && player.id !== game.owner?.id && game.opponent === null) {
                 game.addOpponent(player);
                 socket.emit('ownerIsHere', game.owner.name);
                 io.to(game.owner.id).emit('opponentJoined', game.opponent.name);
@@ -97,6 +97,15 @@ module.exports = (io) => {
              */
             socket.on('movePiece', (direction) => {
                 if (player && player.isPlaying) {
+
+                    // Piece overflow
+                    if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
+                        return ;
+                    }
+                    if (direction === 'left' && (player.currentPiece.x === 0)) {
+                        return ;
+                    }
+
                     let isGameOver = player.movePiece(direction);
                     console.log("piece moved by : ", player.id);
 

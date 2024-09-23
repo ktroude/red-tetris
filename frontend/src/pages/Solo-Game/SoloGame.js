@@ -10,13 +10,14 @@ function SoloGame() {
   const [gameOver, setGameOver] = useState(false);
   const [socket, setSocket] = useState(null);
   const [nextPiece, setNextPiece] = useState(null);
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
   }
 
   useEffect(() => {
-    const newSocket = io("http://c4r1p6:5555");
+    const newSocket = io(apiUrl);
     setSocket(newSocket);
 
     console.log('Socket connected:', newSocket.id);
