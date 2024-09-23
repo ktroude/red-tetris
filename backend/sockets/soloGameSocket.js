@@ -65,7 +65,6 @@ module.exports = (io) => {
                     return ;
                 }
 
-                console.log("piece lenght = ", player.currentPiece.getMatrix()[0].length);
                 let isGameOver = player.movePiece(direction);
                 // Send updated grid to the player
                 io.to(socket.id).emit('updateGridSolo', { grid: player.grid });
@@ -82,7 +81,6 @@ module.exports = (io) => {
                 io.to(socket.id).emit('gameOverSolo', { message: 'Game Over' });
                 game.endGame(io, socket);
             }
-            console.log('movePieceSolo continued');
         });
 
         /**
