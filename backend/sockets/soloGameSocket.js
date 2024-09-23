@@ -65,7 +65,9 @@ module.exports = (io) => {
                     return ;
                 }
 
-                let isGameOver = player.movePiece(direction);
+                let result = player.movePiece(direction);
+                let isGameOver = result.gameover;
+
                 // Send updated grid to the player
                 io.to(socket.id).emit('updateGridSolo', { grid: player.grid });
 

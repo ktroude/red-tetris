@@ -106,7 +106,9 @@ module.exports = (io) => {
                         return ;
                     }
 
-                    let isGameOver = player.movePiece(direction);
+                    let result = player.movePiece(direction);
+                    let isGameOver = result.gameover;
+
                     console.log("piece moved by : ", player.id);
 
                     // Update the grids of both players

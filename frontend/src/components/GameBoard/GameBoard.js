@@ -32,6 +32,9 @@ const GameBoard = ({ grid }) => {
           case 7:
             className = 'red';
             break;
+          case 9:
+            className = 'white';
+            break;
           default:
             className = 'empty-cell'; // Default case if something unexpected happens
             break;

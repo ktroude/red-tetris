@@ -41,6 +41,9 @@ class Player {
      * Ensures the queue always has at least 3 pieces.
      */
     fillPieceQueue() {
+        if (this.nextPieces.length >= 3){
+            return ;
+        }
         while (this.nextPieces.length < 3) {
             const randomShape = Object.keys(SHAPES)[Math.floor(Math.random() * Object.keys(SHAPES).length)];
             this.nextPieces.push(new Piece(SHAPES[randomShape]));
@@ -64,15 +67,14 @@ class Player {
      * @returns {boolean} Returns true if the game is over, false otherwise.
      */
     movePiece(direction) {
-        if (!this.currentPiece) return;
-
+        if (!this.currentPiece) return { gameover: false, linesCleared: 0 };
+    
         let piece = this.currentPiece;
-        let { x, y } = piece;
-        const previousX = x;
-        const previousY = y;
-
+        const previousX = piece.x;
+        const previousY = piece.y;
+    
         this.clearPieceFromGrid(piece);
-
+    
         // Update piece position based on direction
         switch (direction) {
             case 'left':
@@ -86,6 +88,11 @@ class Player {
                 break;
             case 'rotate':
                 piece.rotate();
+                if (!this.isValidPosition(piece)) {
+                    piece.x = previousX;
+                    piece.y = previousY;
+                    piece.rotate();
+                }
                 break;
             case 'space':
                 while (this.isValidPosition(piece)) {
@@ -93,12 +100,12 @@ class Player {
                 }
                 piece.y -= 1;  // Revert to the last valid position
                 this.placePiece(piece);
-                this.clearFullLines();
+                let linesCleared = this.clearFullLines();
                 this.generateNewPiece();
-                return this.checkGameOver();
+                return { gameover: this.checkGameOver(), linesCleared: linesCleared };
         }
-
-        // Validate the new position
+    
+        // Validate the new position for other directions
         if (this.isValidPosition(piece)) {
             this.updateGrid(piece);
         } else {
@@ -106,13 +113,14 @@ class Player {
             piece.y = previousY;
             if (direction === 'down') {
                 this.placePiece(piece);
-                this.clearFullLines();
+                let linesCleared = this.clearFullLines();
                 this.generateNewPiece();
-                return this.checkGameOver();
+                return { gameover: this.checkGameOver(), linesCleared: linesCleared };
             }
         }
+        return { gameover: false, linesCleared: 0 };
     }
-
+    
     /**
      * Checks if the current piece is in a valid position within the grid.
      * 
@@ -210,6 +218,9 @@ class Player {
             while (this.grid.length < 20) {
                 this.grid.unshift(Array(10).fill(0));
             }
+        }
+        if (rowsCleared > 0) {
+            console.log('rowsCleared = ', rowsCleared);
         }
 
         return rowsCleared;

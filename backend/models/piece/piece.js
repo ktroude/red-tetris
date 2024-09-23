@@ -54,31 +54,19 @@ class Piece {
         this.rotation = (this.rotation + 1) % 4;
     }
 
-    /**
-     * Moves the piece to the left by decreasing its x-coordinate.
-     */
+    // Méthodes pour déplacer la pièce
     moveLeft() {
         this.x -= 1;
     }
 
-    /**
-     * Moves the piece to the right by increasing its x-coordinate.
-     */
     moveRight() {
         this.x += 1;
     }
 
-    /**
-     * Moves the piece down by increasing its y-coordinate.
-     */
     moveDown() {
         this.y += 1;
     }
 
-    /**
-     * Resets the position and rotation of the piece to the initial state.
-     * Sets the x-coordinate and y-coordinate to 0 and the rotation to 0.
-     */
     resetPosition() {
         this.x = 0;
         this.y = 0;

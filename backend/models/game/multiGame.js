@@ -60,15 +60,41 @@ class MultiGame {
     startGameLoop(io, player) {
         this.isRunning = true;
         let isGameOver = false;
+        let linesCleared = 0;
         setInterval(() => {
             if (this.isRunning) {
-                if (player.id === this.owner?.id) {
-                    isGameOver = this.owner.movePiece('down');
+                if (player && player.id && player.id === this.owner?.id) {
+                    
+                    let result = this.owner.movePiece('down');
+                    isGameOver = result.gameover;
+                    linesCleared = result.linesCleared;
+
+                    console.log('linesCleared = ', linesCleared);
+                    
+                    if (linesCleared > 1) {
+                        console.log('freeze oppareted');
+                        this.opponent.grid = this.freezeLinesGrid(linesCleared - 1, this.opponent.grid);
+                        console.log('Updated opponent grid:', this.opponent.grid);
+                        io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
+                    }
+
                     io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
                     io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.grid });
                 }
-                if (player.id === this.opponent?.id) {
-                    isGameOver = this.opponent.movePiece('down');
+
+                if (player && player.id && player.id === this.opponent?.id) {
+
+                    let result = this.opponent.movePiece('down');
+                    isGameOver = result.gameover;
+                    linesCleared = result.linesCleared;
+
+                    if (linesCleared > 1) {
+                        console.log('freeze oppareted');
+                        this.owner.grid = this.freezeLinesGrid(linesCleared - 1, this.owner.grid);
+                        console.log('Updated owner grid:', this.owner.grid);
+                        io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
+                    }
+
                     io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
                     io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.grid });
                 }
@@ -96,7 +122,7 @@ class MultiGame {
     distributePieces() {
         if (this.owner && this.opponent) {
             for (let i = 0; i < 20000; i++) {
-                const piece = this.pieceManager.getNextPiece();
+                let piece = this.pieceManager.getNextPiece();
                 piece.x = 5;
                 piece.y = 0;
     
@@ -108,63 +134,26 @@ class MultiGame {
             this.opponent.generateNewPiece();
         }
     }
+
+    freezeLinesGrid(nbrLineTofreeze, grid) {
+        console.log('nbr line to freeze: ', nbrLineTofreeze);
+    
+        for (let i = grid.length - 1; i >= 0 && nbrLineTofreeze > 0; i--) {
+            if (grid[i][0] !== 9) {
+                while (nbrLineTofreeze !== 0) {
+                    for (let j = 0; j < grid[i].length; j++) {
+                        grid[i][j] = 9;
+                    }
+                    nbrLineTofreeze--;
+                    i--;
+                    if (i < 0) break;
+                }
+            }
+        }
+        console.log(grid);
+        return grid;
+    }
+
 }
 
 module.exports = MultiGame;
-/**
- * Manages a single-player Tetris game, handling game logic and interactions for a single player.
- * 
- * @class
- */
-class SoloGame {
-    /**
-     * Initializes a new instance of the SoloGame class.
-     * 
-     * @param {Player} player - The player participating in the solo game.
-     */
-    constructor(player) {
-        this.player = player; // The player participating in the game
-        this.isRunning = false; // Indicates if the game is currently running
-        this.gameInterval = null; // Holds the reference to the game loop interval
-    }
-
-    /**
-     * Starts the game loop for the solo game.
-     * 
-     * @param {Object} io - The socket.io instance used for communication.
-     * @param {Object} socket - The socket representing the player's connection.
-     */
-    startGameLoop(io, socket) {
-        this.isRunning = true;
-        const gameSpeed = 1000; // Interval for game updates in milliseconds
-        let isGameOver = false;
-
-        this.gameInterval = setInterval(() => {
-            if (this.player.isPlaying) {
-                isGameOver = this.player.movePiece('down');
-
-                io.to(socket.id).emit('updateGridSolo', { grid: this.player.grid });
-
-                if (isGameOver) {
-                    this.endGame(io, socket);
-                }
-            }
-        }, gameSpeed);
-    }
-
-    /**
-     * Ends the solo game and notifies the player of the game over state.
-     * 
-     * @param {Object} io - The socket.io instance used for communication.
-     * @param {Object} socket - The socket representing the player's connection.
-     */
-    endGame(io, socket) {
-        this.isRunning = false;
-        this.player.isPlaying = false;
-        clearInterval(this.gameInterval);
-        io.to(socket.id).emit('gameOverSolo', { message: 'Game Over' });
-    }
-}
-
-module.exports = SoloGame;
-

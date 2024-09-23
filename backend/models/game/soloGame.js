@@ -24,11 +24,12 @@ class SoloGame {
     startGameLoop(io, socket) {
         this.isRunning = true;
         const gameSpeed = 1000; // Interval for game updates in milliseconds
-        let isGameOver = false;
 
         this.gameInterval = setInterval(() => {
             if (this.player.isPlaying) {
-                isGameOver = this.player.movePiece('down');
+
+                let result = this.player.movePiece('down');
+                let isGameOver = result.gameover;
 
                 io.to(socket.id).emit('updateGridSolo', { grid: this.player.grid });
 
