@@ -1,4 +1,5 @@
 const PieceManager = require('../piece/pieceManager');
+const Piece = require('../piece/piece')
 
 /**
  * Manages a multiplayer Tetris game, handling game logic and player interactions.
@@ -63,6 +64,10 @@ class MultiGame {
         let linesCleared = 0;
         setInterval(() => {
             if (this.isRunning) {
+                if (this.owner?.id === undefined || this.opponent?.id === undefined) {
+                    this.isRunning = false;
+                    return;
+                }
                 if (player && player.id && player.id === this.owner?.id) {
                     
                     let result = this.owner.movePiece('down');
@@ -121,17 +126,20 @@ class MultiGame {
      */
     distributePieces() {
         if (this.owner && this.opponent) {
-            for (let i = 0; i < 20000; i++) {
+            for (let i = 0; i < 20; i++) {
                 let piece = this.pieceManager.getNextPiece();
                 piece.x = 5;
                 piece.y = 0;
+
+                let opponentPiece = new Piece(piece.shape);
+                opponentPiece.x = 5;
+                opponentPiece.y = 0;
     
                 this.owner.nextPieces.push(piece);
-                this.opponent.nextPieces.push(piece);
+                this.opponent.nextPieces.push(opponentPiece);
             }
-
-            this.owner.generateNewPiece();
-            this.opponent.generateNewPiece();
+            this.owner.currentPiece = this.owner.nextPieces.shift();
+            this.opponent.currentPiece = this.opponent.nextPieces.shift();
         }
     }
 

@@ -22,7 +22,9 @@ class Player {
         this.nextPieces = []; // queue of upcoming pieces
         this.score = 0; // unused for now, potentially for future scoring system
         this.isPlaying = true; // indicates if the player is actively playing the game
-        this.fillPieceQueue(); // fills the piece queue at initialization
+        if (! isMulti) {
+            this.fillPieceQueue(); // fills the piece queue at initialization
+        }
     }
 
     /**
@@ -72,9 +74,9 @@ class Player {
         let piece = this.currentPiece;
         const previousX = piece.x;
         const previousY = piece.y;
-    
+
         this.clearPieceFromGrid(piece);
-    
+
         // Update piece position based on direction
         switch (direction) {
             case 'left':

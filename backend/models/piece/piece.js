@@ -54,7 +54,7 @@ class Piece {
         this.rotation = (this.rotation + 1) % 4;
     }
 
-        moveLeft() {
+    moveLeft() {
         this.x -= 1;
     }
 

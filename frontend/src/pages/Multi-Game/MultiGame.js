@@ -35,8 +35,11 @@ function MultiGame() {
       setSocket(io(apiUrl));
 
       return () => {
-        socket.disconnect();
-        setSocket(null);
+        try{
+          socket.disconnect();
+          setSocket(null);
+        } catch(e) {
+        }
       };
     }
   }, []);
@@ -46,9 +49,9 @@ function MultiGame() {
       // Join a multiplayer room
       socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomname });
 
-      socket.on('GameReady', ()=> {
+      socket.on('GameReady', (data) => {
         socket.emit('gameStart');
-      })
+        })
 
       // Initialize the grid and game state
       socket.on('init', (data) => {
