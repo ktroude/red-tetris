@@ -33,13 +33,12 @@ function MultiGame() {
   useEffect(() => {
     if (socket === null) {
       setSocket(io(apiUrl));
-
       return () => {
         try{
           socket.disconnect();
-          setSocket(null);
         } catch(e) {
         }
+        setSocket(null);
       };
     }
   }, []);

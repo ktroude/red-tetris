@@ -113,15 +113,26 @@ module.exports = (io) => {
 
                     let result = player.movePiece(direction);
                     let isGameOver = result.gameover;
-
-                    console.log("piece moved by : ", player.id);
+                    let linesCleared = result.linesCleared;
 
                     // Update the grids of both players
                     if (player.id === game.owner.id) {
+
+                        if (linesCleared > 1) {
+                            game.opponent.grid = game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
+                            io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
+                        }
+
                         io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.grid });
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
                     if (player.id === game.opponent.id) {
+
+                        if (linesCleared > 1) {
+                            game.owner.grid = game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
+                            io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
+                        }
+
                         io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.grid });
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }

@@ -68,17 +68,16 @@ class MultiGame {
                     this.isRunning = false;
                     return;
                 }
+
                 if (player && player.id && player.id === this.owner?.id) {
                     
                     let result = this.owner.movePiece('down');
                     isGameOver = result.gameover;
                     linesCleared = result.linesCleared;
-
-                    console.log('linesCleared = ', linesCleared);
                     
                     if (linesCleared > 1) {
                         console.log('freeze oppareted');
-                        this.opponent.grid = this.freezeLinesGrid(linesCleared - 1, this.opponent.grid);
+                        this.opponent.grid = this.freezeLinesGrid(linesCleared - 1, this.opponent);
                         console.log('Updated opponent grid:', this.opponent.grid);
                         io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
                     }
@@ -95,7 +94,7 @@ class MultiGame {
 
                     if (linesCleared > 1) {
                         console.log('freeze oppareted');
-                        this.owner.grid = this.freezeLinesGrid(linesCleared - 1, this.owner.grid);
+                        this.owner.grid = this.freezeLinesGrid(linesCleared - 1, this.owner);
                         console.log('Updated owner grid:', this.owner.grid);
                         io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
                     }
@@ -126,7 +125,7 @@ class MultiGame {
      */
     distributePieces() {
         if (this.owner && this.opponent) {
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 20000; i++) {
                 let piece = this.pieceManager.getNextPiece();
                 piece.x = 5;
                 piece.y = 0;

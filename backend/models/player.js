@@ -207,12 +207,12 @@ class Player {
      */
     clearFullLines() {
         const rowsToClear = this.grid.reduce((acc, row, index) => {
-            if (row.every(cell => cell !== 0)) {
+            if (row.every(cell => cell !== 0 && cell !== 9)) {
                 acc.push(index);
             }
             return acc;
         }, []);
-
+    
         const rowsCleared = rowsToClear.length;
 
         if (rowsCleared > 0) {
@@ -224,10 +224,10 @@ class Player {
         if (rowsCleared > 0) {
             console.log('rowsCleared = ', rowsCleared);
         }
-
+    
         return rowsCleared;
     }
-
+    
     /**
      * Generates a new piece for the player and updates the piece queue.
      * Ends the game if no valid position is available for the new piece.
