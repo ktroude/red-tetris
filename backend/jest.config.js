@@ -1,10 +1,18 @@
 // jest.config.js
 
-// test module for JS
-
 module.exports = {
-    transform: {
-      '^.+\\.js$': 'babel-jest',
-    },
-  };
-  
+  transform: {
+    '^.+\\.js$': 'babel-jest',
+  },
+  collectCoverage: true,
+  coverageDirectory: "coverage",
+  coverageReporters: [
+    "json",
+    "text",
+    "lcov"
+  ],
+  collectCoverageFrom: [
+    "models/**/*.js",
+    "sockets/**/*.js"
+  ]
+};

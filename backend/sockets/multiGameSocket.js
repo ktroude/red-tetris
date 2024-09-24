@@ -1,3 +1,4 @@
+// MultiGameSocket.js
 
 const MultiGame = require('../models/game/multiGame');
 const Player = require('../models/player');
@@ -17,10 +18,10 @@ module.exports = (io) => {
      * @param {Object} socket - The client's WebSocket connection.
      */
     io.on('connection', (socket) => {
-        console.log('New client connected:', socket.id);
+        console.log('New client connected in Multi:', socket.id);
 
-        let player = null;
-        let game = null;
+        let player = null; // The player instance for the connected socket
+        let game = null;   // The multiplayer game instance for the player
 
         /**
          * Event triggered when a player joins a multiplayer game.
@@ -34,7 +35,7 @@ module.exports = (io) => {
          */
         socket.on('joinMultiGame', (data) => {
             const { playerName, requestedRoom } = data;
-            console.log("joinMultiGame data: ", data);
+            console.log('joinMultiGame data: ', data);
 
             // Create room if it doesn't exist
             if (!rooms[requestedRoom]) {
@@ -62,15 +63,15 @@ module.exports = (io) => {
             // Notify the player if the room is full
             if (game.owner?.id !== player.id && game.opponent?.id !== player.id) {
                 socket.emit('roomFull', true);
-                console.log('room is full');
-                return ;
+                console.log('Room is full');
+                return;
             }
 
             // Initialize the player's grid
             io.to(socket.id).emit('init', { grid: player.grid });
 
             // Join the player to the room
-            socket.join(roomId);
+            socket.join(requestedRoom);
 
             // Notify both players when the game is ready
             if (game.owner !== null && game.opponent !== null) {
@@ -83,14 +84,14 @@ module.exports = (io) => {
              * This event distributes pieces to players and starts the game loop.
              */
             socket.on('gameStart', () => {
-                console.log('game started');
+                console.log('Game started');
                 game.distributePieces();
-                setTimeout(() => {
-                }, 1000);
                 game.startGameLoop(io, player);
-                try{
+                try {
                     socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
-                } catch(e) {}
+                } catch (e) {
+                    console.error('Error sending next piece:', e);
+                }
             });
 
             /**
@@ -103,12 +104,13 @@ module.exports = (io) => {
             socket.on('movePiece', (direction) => {
                 if (player && player.isPlaying) {
 
-                    // Piece overflow
+                    // Prevent piece overflow on the right side
                     if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
-                        return ;
+                        return;
                     }
+                    // Prevent piece overflow on the left side
                     if (direction === 'left' && (player.currentPiece.x === 0)) {
-                        return ;
+                        return;
                     }
 
                     let result = player.movePiece(direction);
@@ -117,7 +119,6 @@ module.exports = (io) => {
 
                     // Update the grids of both players
                     if (player.id === game.owner.id) {
-
                         if (linesCleared > 1) {
                             game.opponent.grid = game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
                             io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
@@ -126,8 +127,8 @@ module.exports = (io) => {
                         io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.grid });
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
-                    if (player.id === game.opponent.id) {
 
+                    if (player.id === game.opponent.id) {
                         if (linesCleared > 1) {
                             game.owner.grid = game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
                             io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
@@ -140,14 +141,13 @@ module.exports = (io) => {
                     // Send the next piece to the current player
                     io.to(player.id).emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
 
-                    // Handle game over conditions
+                    // Handle game over and win conditions
                     if (isGameOver && player.id === game.owner.id) {
                         io.to(game.owner.id).emit('gameOver', { message: 'Game Over :(' });
-                        io.to(game.opponent.id).emit('win', { message: 'You win !' });
-                    }
-                    if (isGameOver && player === game.opponent) {
+                        io.to(game.opponent.id).emit('win', { message: 'You win!' });
+                    } else if (isGameOver && player.id === game.opponent.id) {
                         io.to(game.opponent.id).emit('gameOver', { message: 'Game Over :(' });
-                        io.to(game.owner.id).emit('win', { message: 'You win !' });
+                        io.to(game.owner.id).emit('win', { message: 'You win!' });
                     }
                 }
             });
@@ -160,17 +160,17 @@ module.exports = (io) => {
             socket.on('disconnect', () => {
                 if (game.opponent && player.id === game.opponent.id) {
                     game.removeOpponent();
-                    io.to(game.owner.id).emit('win', { message: 'You win !' });
-                        console.log(`Opponent ${socket.id} disconnected from room ${roomId}`);
+                    io.to(game.owner.id).emit('win', { message: 'You win!' });
+                    console.log(`Opponent ${socket.id} disconnected from room ${requestedRoom}`);
                 }
                 if (game.owner && player.id === game.owner.id) {
                     if (game.opponent) {
-                        io.to(game.opponent.id).emit('win', { message: 'You win !' });
+                        io.to(game.opponent.id).emit('win', { message: 'You win!' });
                         game.removeOpponent();
                     }
                     game.removeOwner();
                     rooms[requestedRoom] = null;
-                    console.log(`Owner ${socket.id} disconnected and room ${roomId} is closed.`);
+                    console.log(`Owner ${socket.id} disconnected and room ${requestedRoom} is closed.`);
                 }
                 console.log(`Client disconnected: ${socket.id}`);
             });

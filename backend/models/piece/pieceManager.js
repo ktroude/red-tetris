@@ -1,4 +1,3 @@
-
 const SHAPES = require('./shapes');
 const Piece = require('./piece');
 

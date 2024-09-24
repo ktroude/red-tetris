@@ -20,9 +20,9 @@ class Player {
         this.grid = this.createEmptyGrid(); // player's Tetris grid
         this.currentPiece = null; // the piece currently being controlled by the player
         this.nextPieces = []; // queue of upcoming pieces
-        this.score = 0; // unused for now, potentially for future scoring system
+        this.score = 0; // scoring system
         this.isPlaying = true; // indicates if the player is actively playing the game
-        if (! isMulti) {
+        if (!isMulti) {
             this.fillPieceQueue(); // fills the piece queue at initialization
         }
     }
@@ -43,9 +43,6 @@ class Player {
      * Ensures the queue always has at least 3 pieces.
      */
     fillPieceQueue() {
-        if (this.nextPieces.length >= 3){
-            return ;
-        }
         while (this.nextPieces.length < 3) {
             const randomShape = Object.keys(SHAPES)[Math.floor(Math.random() * Object.keys(SHAPES).length)];
             this.nextPieces.push(new Piece(SHAPES[randomShape]));
@@ -66,11 +63,12 @@ class Player {
      * Handles rotation, normal movement (left, right, down), and "hard drop" (space bar).
      * 
      * @param {string} direction - The direction to move the piece ('left', 'right', 'down', 'rotate', 'space').
-     * @returns {boolean} Returns true if the game is over, false otherwise.
+     * @returns {Object} Returns an object with a boolean (true if the game is over, false otherwise)
+     *  and the number of lines cleared by the player after a mouvement.
      */
     movePiece(direction) {
         if (!this.currentPiece) return { gameover: false, linesCleared: 0 };
-    
+
         let piece = this.currentPiece;
         const previousX = piece.x;
         const previousY = piece.y;
@@ -106,7 +104,7 @@ class Player {
                 this.generateNewPiece();
                 return { gameover: this.checkGameOver(), linesCleared: linesCleared };
         }
-    
+
         // Validate the new position for other directions
         if (this.isValidPosition(piece)) {
             this.updateGrid(piece);
@@ -122,7 +120,7 @@ class Player {
         }
         return { gameover: false, linesCleared: 0 };
     }
-    
+
     /**
      * Checks if the current piece is in a valid position within the grid.
      * 
@@ -208,6 +206,7 @@ class Player {
      */
     clearFullLines() {
         const rowsToClear = this.grid.reduce((acc, row, index) => {
+            // 0 for empty cell and 9 for cells freeze by an opponant
             if (row.every(cell => cell !== 0 && cell !== 9)) {
                 acc.push(index);
             }
@@ -216,19 +215,22 @@ class Player {
     
         const rowsCleared = rowsToClear.length;
 
+        // clear the lines fulled
         if (rowsCleared > 0) {
             this.grid = this.grid.filter((_, index) => !rowsToClear.includes(index));
             while (this.grid.length < 20) {
                 this.grid.unshift(Array(10).fill(0));
             }
         }
+
+        // update the score after each lines cleared
         for (let i = 0; i < rowsCleared; i++) {
             this.score += 1000;
         }
 
         return rowsCleared;
     }
-    
+
     /**
      * Generates a new piece for the player and updates the piece queue.
      * Ends the game if no valid position is available for the new piece.
