@@ -2,91 +2,76 @@ const SoloGame = require('../models/game/soloGame');
 const Player = require('../models/player');
 jest.useFakeTimers(); // For managing setInterval in tests
 
-describe('SoloGame', () => {
+// Mock the Player class for testing
+jest.mock('../models/player');
 
-    let game, player;
+describe('SoloGame', () => {
+    let player;
+    let soloGame;
+    let io;
+    let socket;
 
     beforeEach(() => {
-        game = new SoloGame();
-        player = new Player('1', 'TestPlayer');
-        game.addPlayer(player);
+        // Create a mock player with default values
+        player = new Player();
+        player.score = 0; // Initial score
+        player.grid = []; // Initialize an empty grid
+        player.movePiece = jest.fn(); // Mock movePiece method
+        player.isPlaying = true; // Mark the player as playing
+
+        // Initialize SoloGame instance
+        soloGame = new SoloGame(player);
+
+        // Mock io and socket objects
+        io = {
+            to: jest.fn().mockReturnThis(),
+            emit: jest.fn(),
+        };
+
+        socket = { id: 'testSocketId' }; // Mock socket ID
     });
 
-    afterEach(() => {
-        game.stop();
-        jest.clearAllTimers(); // Clears any interval set during the tests
+    test('should initialize with correct properties', () => {
+        expect(soloGame.player).toBe(player); // Check the player instance
+        expect(soloGame.isRunning).toBe(false); // Check if the game is initially not running
+        expect(soloGame.baseSpeed).toBe(1000); // Check initial game speed
+        expect(soloGame.minSpeed).toBe(100); // Check minimum speed
     });
 
-    test('should create a SoloGame instance with correct mode and add a player', () => {
-        expect(game).toBeInstanceOf(SoloGame);
-        expect(game.mode).toBe('solo');
+    test('should calculate game speed correctly', () => {
+        // Test with different scores
+        player.score = 0;
+        expect(soloGame.calculateGameSpeed()).toBe(1000); // Initial speed at 0 score
+
+        player.score = 2000;
+        expect(soloGame.calculateGameSpeed()).toBe(900); // Speed should reduce with score
+
+        player.score = 30000; // Excessive score to test speed cap
+        expect(soloGame.calculateGameSpeed()).toBe(100); // Speed should not go below 100ms
+    });
+
+    test('should start the game loop', () => {
+        // Mock the player's movePiece method to return game over condition
+        player.movePiece.mockReturnValueOnce({ gameover: false });
+
+        // Start the game loop
+        soloGame.startGameLoop(io, socket);
+
+        expect(soloGame.isRunning).toBe(true); // Game should be running
+        expect(soloGame.gameInterval).toBeDefined(); // Game interval should be set
+
+        // Simulate the game loop
+        jest.advanceTimersByTime(soloGame.baseSpeed); // Fast forward the timer
+        expect(player.movePiece).toHaveBeenCalledWith('down'); // Check if movePiece was called
+        expect(io.to).toHaveBeenCalledWith(socket.id); // Check if the socket ID was used
+    });
+
+    test('should end the game', () => {
+        soloGame.endGame(io, socket);
         
-        const addedPlayer = game.players[player.id];
-        expect(addedPlayer).toBeDefined();
-        expect(addedPlayer.name).toBe('TestPlayer');
-        expect(addedPlayer.id).toBe('1');
-        expect(addedPlayer.grid).toBeDefined();
-        expect(Array.isArray(addedPlayer.grid)).toBe(true); // Check that grid is an array
+        expect(soloGame.isRunning).toBe(false); // Game should be marked as not running
+        expect(player.isPlaying).toBe(false); // Player should be marked as not playing
+        expect(io.to).toHaveBeenCalledWith(socket.id); // Check if the socket ID was used
+        expect(io.emit).toHaveBeenCalledWith('gameOverSolo', { message: 'Game Over' }); // Check if game over message was sent
     });
-
-    test('should be able to add a player', () => {
-        expect(game.players[player.id]).toBe(player); // Player was added
-    });
-
-    test('should increase speed every 30 seconds when game starts', () => {
-        game.start();
-
-        expect(game.speed).toBe(1000); // Initial speed
-        expect(game.level).toBe(1); // Initial level
-
-        // Simulate 30 seconds
-        jest.advanceTimersByTime(30000);
-        expect(game.speed).toBe(900); // Speed increased after 30 seconds
-        expect(game.level).toBe(2); // Level increased
-
-        // Simulate another 30 seconds
-        jest.advanceTimersByTime(30000);
-        expect(game.speed).toBe(800); // Speed increased again
-        expect(game.level).toBe(3);
-    });
-
-    test('should stop the game when stop() is called', () => {
-        game.start();
-        expect(game.gameOver).toBe(false); // Game is running
-
-        game.stop();
-        expect(game.gameOver).toBe(true); // Game stopped
-    });
-
-    test('should stop the game and return true when handleGameOver detects game over', () => {
-        // Mock player's checkGameOver method to simulate game over
-        player.checkGameOver = jest.fn(() => true);
-        
-        const isGameOver = game.handleGameOver(player);
-        expect(isGameOver).toBe(true); // Game over should return true
-        expect(game.gameOver).toBe(true); // Game should stop
-    });
-
-    test('should return false when handleGameOver does not detect game over', () => {
-        // Mock player's checkGameOver method to simulate no game over
-        player.checkGameOver = jest.fn(() => false);
-
-        const isGameOver = game.handleGameOver(player);
-        expect(isGameOver).toBe(false); // No game over
-        expect(game.gameOver).toBe(false); // Game should still be running
-    });
-
-    test('should remove a player correctly', () => {
-        game.removePlayer(player.id);
-        expect(game.getPlayer(player.id)).toBeUndefined(); // Player should be removed
-    });
-
-    test('should increase speed but not drop below 100ms', () => {
-        game.speed = 200; // Set the speed to a low value to test the lower limit
-
-        game.increaseSpeed();
-        expect(game.speed).toBe(100); // Speed shouldn't go below 100ms
-        expect(game.level).toBe(2); // Level should still increase
-    });
-
 });

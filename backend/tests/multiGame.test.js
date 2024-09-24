@@ -1,84 +1,122 @@
 const MultiGame = require('../models/game/multiGame');
 const Player = require('../models/player');
 const PieceManager = require('../models/piece/pieceManager');
+const Piece = require('../models/piece/piece');
 
-jest.mock('../models/piece/pieceManager'); // Mock to avoid complex dependencies
+
+// Mock the Piece and PieceManager classes
+jest.mock('../models/piece/piece');
+jest.mock('../models/piece/pieceManager');
 
 describe('MultiGame', () => {
-    let game;
-    let player1, player2;
+    let multiGame;
+    let owner;
+    let opponent;
+    let io;
+    let player;
 
     beforeEach(() => {
-        game = new MultiGame();
-        player1 = new Player('0', 'Player 1');
-        player2 = new Player('1', 'Player 2');
-        game.addPlayer(player1);
-        game.addPlayer(player2);
+        // Mock players
+        owner = { id: 'ownerId', movePiece: jest.fn(), grid: [], nextPieces: [], currentPiece: null };
+        opponent = { id: 'opponentId', movePiece: jest.fn(), grid: [], nextPieces: [], currentPiece: null };
+        
+        // Create MultiGame instance
+        multiGame = new MultiGame('room1');
 
-        PieceManager.mockClear(); // Clear mocks between tests
+        // Assign players to the game
+        multiGame.addOwner(owner);
+        multiGame.addOpponent(opponent);
+
+        // Mock the PieceManager to return a predefined piece
+        PieceManager.mockImplementation(() => {
+            return {
+                getNextPiece: jest.fn().mockReturnValue(new Piece([[1]])) // Mocked piece shape
+            };
+        });
+
+        // Mock the io object
+        io = {
+            to: jest.fn().mockReturnThis(),
+            emit: jest.fn(),
+        };
     });
 
-    test('should create a MultiGame instance with correct mode', () => {
-        // Verify that MultiGame is instantiated with the correct mode
-        expect(game).toBeInstanceOf(MultiGame);
-        expect(game.mode).toBe('multi');
+    test('should initialize with correct properties', () => {
+        expect(multiGame.roomId).toBe('room1'); // Check room ID
+        expect(multiGame.owner).toBe(owner); // Check owner
+        expect(multiGame.opponent).toBe(opponent); // Check opponent
+        expect(multiGame.pieceManager).toBeInstanceOf(PieceManager); // Check piece manager instance
+        expect(multiGame.isRunning).toBe(false); // Check initial game state
     });
 
-    test('should add players to the MultiGame instance', () => {
-        // Check that players are correctly added to the MultiGame instance
-        expect(game.players[player1.id]).toBe(player1);
-        expect(game.players[player2.id]).toBe(player2);
-        expect(Object.keys(game.players)).toHaveLength(2);
+    test('should add players correctly', () => {
+        expect(multiGame.owner).toBe(owner); // Check if owner is set correctly
+        expect(multiGame.opponent).toBe(opponent); // Check if opponent is set correctly
     });
 
-    test('should assign a new piece to both players when game starts', () => {
-        // Mock the piece that will be assigned to the players
-        const mockPiece = { shape: 'O', x: 0, y: 0 };
-        PieceManager.prototype.getNextPiece.mockReturnValue(mockPiece);
+    test('should remove players correctly', () => {
+        multiGame.removeOwner();
+        expect(multiGame.owner).toBeNull(); // Check if owner is removed
 
-        game.start(); // Start the game
-
-        // Verify that the new piece is assigned to both players
-        expect(PieceManager.prototype.getNextPiece).toHaveBeenCalled();
-        expect(player1.currentPiece).toBe(mockPiece);
-        expect(player2.currentPiece).toBe(mockPiece);
+        multiGame.removeOpponent();
+        expect(multiGame.opponent).toBeNull(); // Check if opponent is removed
     });
 
-    test('should detect game over and return losing and winning players', () => {
-        // Simulate game over condition for player1
-        jest.spyOn(player1, 'checkGameOver').mockReturnValue(true);
-        jest.spyOn(player2, 'checkGameOver').mockReturnValue(false);
+    test('should distribute pieces correctly', () => {
+        multiGame.distributePieces();
 
-        const result = game.handleGameOver();
+        // Check if both players received the same piece
+        expect(owner.nextPieces.length).toBeGreaterThan(0); // Owner should have pieces
+        expect(opponent.nextPieces.length).toBeGreaterThan(0); // Opponent should have pieces
+        expect(owner.nextPieces[0].x).toBe(5); // Check initial x position
+        expect(owner.nextPieces[0].y).toBe(0); // Check initial y position
+        expect(opponent.nextPieces[0].x).toBe(5); // Check initial x position
+        expect(opponent.nextPieces[0].y).toBe(0); // Check initial y position
 
-        // Check that the losing and winning players are correctly identified
-        expect(result.losingPlayer).toBe(player1);
-        expect(result.winningPlayer).toBe(player2);
-        expect(game.gameOver).toBe(true); // Verify that the game is stopped
+        // Check if the first pieces are set correctly
+        expect(owner.currentPiece).toBeTruthy(); // Current piece should not be null or empty
+        expect(opponent.currentPiece).toBeTruthy(); // Current piece should not be null or empty
     });
 
-    test('should return null if no player has lost', () => {
-        // Simulate no game over condition for both players
-        jest.spyOn(player1, 'checkGameOver').mockReturnValue(false);
-        jest.spyOn(player2, 'checkGameOver').mockReturnValue(false);
-
-        const result = game.handleGameOver();
-
-        // Verify that no game over condition is detected and game continues
-        expect(result).toBeNull();
-        expect(game.gameOver).toBe(false); // The game should not be stopped
+    test('should handle game loop logic', () => {
+        jest.useFakeTimers(); // Use fake timers for the game loop
+    
+        // Mock the movePiece method for both owner and opponent
+        owner.movePiece = jest.fn().mockReturnValueOnce({ gameover: false, linesCleared: 0 });
+        opponent.movePiece = jest.fn().mockReturnValueOnce({ gameover: false, linesCleared: 2 });
+    
+        // Start the game loop
+        multiGame.startGameLoop(io, owner);
+    
+        // Simulate the 'movePiece' event for the owner
+        io.to = jest.fn().mockReturnValue({
+            emit: jest.fn() // Mock emit method
+        });
+    
+        // Emit the movePiece event for the owner moving down
+        io.to(owner.id).emit('movePiece', 'down');
+    
+        // Advance timers to simulate the game loop iteration
+        jest.advanceTimersByTime(1000); // Fast forward by 1 second
+    
+        // Check if freezing lines in the opponent's grid
+        expect(multiGame.owner.grid).toEqual(multiGame.freezeLinesGrid(1, opponent.grid)); // Check if owner's grid updated
     });
 
-    test('should assign the same new piece to both players', () => {
-        // Mock a different piece to be assigned to the players
-        const mockPiece = { shape: 'T', x: 1, y: 1 };
-        PieceManager.prototype.getNextPiece.mockReturnValue(mockPiece);
+    test('should freeze lines correctly', () => {
+        // Create a simple grid for testing
+        opponent.grid = [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+        ];
 
-        game.assignNewPiece(); // Assign a new piece to players
+        // Freeze 2 lines
+        const updatedGrid = multiGame.freezeLinesGrid(2, opponent.grid);
 
-        // Verify that the same new piece is assigned to both players
-        expect(PieceManager.prototype.getNextPiece).toHaveBeenCalled();
-        expect(player1.currentPiece).toBe(mockPiece);
-        expect(player2.currentPiece).toBe(mockPiece);
+        // Check if the last two lines were frozen
+        expect(updatedGrid[2]).toEqual([9, 9, 9]); // Check if the third line is frozen
+        expect(updatedGrid[3]).toEqual([9, 9, 9]); // Check if the fourth line is frozen
     });
 });

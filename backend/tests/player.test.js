@@ -1,146 +1,169 @@
-
 const Player = require('../models/player');
 const Piece = require('../models/piece/piece');
 const SHAPES = require('../models/piece/shapes');
 
+describe('Player', () => {
+    let player;
 
-describe('Player class', () => {
-
-    test('Player should start with an empty grid', () => {
-        const player = new Player('1', 'TestPlayer');
-        expect(player.grid.length).toBe(20);
-        expect(player.grid[0].length).toBe(10);
-        expect(player.grid.flat().every(cell => cell === 0)).toBe(true);
+    beforeEach(() => {
+        // Initialize a new player before each test
+        player = new Player('socket_id', 'Test Player');
     });
 
-    test('Player should set a piece', () => {
-        const player = new Player('1', 'TestPlayer');
+    test('should initialize with correct properties', () => {
+        expect(player.id).toBe('socket_id');
+        expect(player.name).toBe('Test Player');
+        expect(player.grid).toHaveLength(20);
+        expect(player.grid[0]).toHaveLength(10);
+        expect(player.nextPieces).toHaveLength(3);
+        expect(player.isPlaying).toBe(true);
+    });
+
+    test('should create an empty grid', () => {
+        const emptyGrid = player.createEmptyGrid();
+        expect(emptyGrid).toHaveLength(20);
+        expect(emptyGrid[0]).toHaveLength(10);
+        expect(emptyGrid.flat()).toEqual(Array(200).fill(0)); // 20 * 10 = 200
+    });
+
+    test('should fill piece queue with random pieces', () => {
+        const initialQueue = player.nextPieces.length;
+        player.fillPieceQueue();
+        expect(player.nextPieces.length).toBeGreaterThanOrEqual(initialQueue); // Should be at least 3
+    });
+
+    test('should set current piece', () => {
         const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
         expect(player.currentPiece).toBe(piece);
     });
 
-    test('Player should move piece left', () => {
-        const player = new Player('1', 'TestPlayer');
-        let piece = new Piece(SHAPES.I);
-        piece.x = 1; // Initial position
-        piece.y = 0;
+    test('should move piece left', () => {
+        const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
+        piece.x = 5; // Initial position
         player.movePiece('left');
-        expect(piece.x).toBe(0); // Verify that the piece was moved left
+        expect(piece.x).toBe(4); // The piece should move left
     });
 
-    test('Player should move piece right', () => {
-        const player = new Player('1', 'TestPlayer');
+    test('should move piece right', () => {
         const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
+        piece.x = 5; // Initial position
         player.movePiece('right');
-        expect(piece.x).toBe(1);
+        expect(piece.x).toBe(6); // The piece should move right
     });
 
-    test('Player should move piece down', () => {
-        const player = new Player('1', 'TestPlayer');
+    test('should move piece down', () => {
         const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
+        piece.y = 0; // Initial position
         player.movePiece('down');
-        expect(piece.y).toBe(1);
+        expect(piece.y).toBe(1); // The piece should move down
     });
 
-    test('Player should rotate piece', () => {
-        const player = new Player('1', 'TestPlayer');
+    test('should not move piece out of bounds (left)', () => {
         const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
-        piece.rotate();
-        const matrix = piece.getMatrix();
-        expect(matrix).toEqual(
-            [
-                [1],
-                [1],
-                [1],
-                [1]
-            ]
-        );
+        piece.x = 0; // Position at the left edge
+        player.movePiece('left');
+        expect(piece.x).toBe(0); // Should not move left
     });
 
-    test('Player should reset piece position and rotation', () => {
-        const player = new Player('1', 'TestPlayer');
+    test('should not move piece out of bounds (right)', () => {
         const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
-        piece.moveRight();
-        piece.moveDown();
-        piece.rotate();
-        player.currentPiece.resetPosition();
-        expect(piece.x).toBe(0);
-        expect(piece.y).toBe(0);
-        expect(piece.rotation).toBe(0);
+        piece.x = 9; // Position at the right edge
+        player.movePiece('right');
+        expect(piece.x).toBe(9); // Should not move right
     });
 
-    test('Player should check game over', () => {
-        const player = new Player('1', 'TestPlayer');
-        // Manually fill the top row to simulate game over
-        player.grid[0] = Array(10).fill(1);
-        expect(player.checkGameOver()).toBe(true);
+    test('should rotate piece', () => {
+        const piece = new Piece(SHAPES.I);
+        player.setPiece(piece);
+        const initialRotation = piece.rotation;
+        player.movePiece('rotate');
+        expect(piece.rotation).not.toBe(initialRotation); // Should change rotation
     });
 
-    test('Player should generate a new piece', () => {
-        const player = new Player('1', 'TestPlayer');
+    test('should not rotate piece out of bounds', () => {
+        const piece = new Piece(SHAPES.I);
+        player.setPiece(piece);
+        piece.x = 0; // Position at the left edge
+        player.movePiece('rotate');
+        expect(piece.x).toBe(0); // Should not move out of bounds
+    });
+
+    test('should clear full lines and increase score', () => {
+        // Fill the grid to create a full line
+        player.grid[19] = Array(10).fill(1); // Full line
+        const linesCleared = player.clearFullLines();
+        expect(linesCleared).toBe(1);
+        expect(player.grid[19]).toEqual(Array(10).fill(0)); // Line should be cleared
+        expect(player.score).toBe(1000); // Score should increase
+    });
+
+    test('should clear multiple full lines and increase score accordingly', () => {
+        player.grid[19] = Array(10).fill(1); // Full line
+        player.grid[18] = Array(10).fill(1); // Another full line
+        const linesCleared = player.clearFullLines();
+        expect(linesCleared).toBe(2);
+        expect(player.score).toBe(2000); // Score should increase accordingly
+    });
+
+    test('should generate a new piece', () => {
         player.generateNewPiece();
         expect(player.currentPiece).toBeDefined();
-        expect(player.currentPiece.x).toBeGreaterThanOrEqual(0);
+        expect(player.currentPiece.x).toBe(5);
         expect(player.currentPiece.y).toBe(0);
-        expect(player.isValidPosition(player.currentPiece)).toBe(true);
+        expect(player.nextPieces).toHaveLength(3);
     });
 
-    test('Player should clear full lines and update grid', () => {
-        const player = new Player('1', 'TestPlayer');
-        // Simulate a full line
-        player.grid[18] = Array(10).fill(1);
-        player.clearFullLines();
-        // Check if the line was cleared and the grid is updated
-        expect(player.grid[18].every(cell => cell === 0)).toBe(true);
-        expect(player.grid.length).toBe(20);
+    test('should not generate a new piece in multiplayer mode', () => {
+        const multiplayerPlayer = new Player('socket_id', 'Test Player', true);
+        multiplayerPlayer.fillPieceQueue(); // Fill the queue first
+        multiplayerPlayer.generateNewPiece();
+        expect(multiplayerPlayer.currentPiece).toBeDefined();
+        expect(multiplayerPlayer.nextPieces).toHaveLength(2); // Queue should remain at 2
     });
 
-    test('Player should place a piece on the grid', () => {
-        const player = new Player('1', 'TestPlayer');
-        const piece = new Piece(SHAPES.O);
-        piece.x = 4; // x position of the piece
-        piece.y = 18; // y position of the piece
+    test('should check game over condition', () => {
+        // Simulate game over condition
+        player.grid[0] = Array(10).fill(1);
+        player.grid[1] = Array(10).fill(1);
+        expect(player.checkGameOver()).toBe(true); // Game should be over
+    });
+
+    test('should not be game over if the grid is clear', () => {
+        expect(player.checkGameOver()).toBe(false); // Game should not be over
+    });
+
+    test('should clear current piece from grid', () => {
+        const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
-        // Store the state of a specific cell before placing the piece
-        const gridBeforeCell = player.grid[piece.y][piece.x];
-        // Place the piece on the grid
+        piece.x = 5;
+        piece.y = 0;
+        player.updateGrid(piece); // Place piece in the grid
+        player.clearPieceFromGrid(piece); // Clear it
+        expect(player.grid[0][5]).toBe(0); // Position should be cleared
+    });
+
+    test('should place piece on the grid', () => {
+        const piece = new Piece(SHAPES.I);
+        player.setPiece(piece);
+        piece.x = 5;
+        piece.y = 0;
+        player.updateGrid(piece); // Place piece in the grid
         player.placePiece(piece);
-        // Store the state of the same cell after placing the piece
-        const gridAfterCell = player.grid[piece.y][piece.x];
-        // Ensure the grid has changed at that location
-        expect(gridBeforeCell).not.toBe(gridAfterCell); // The cell should be different after placing the piece
+        expect(player.grid[0][5]).toBeDefined(); // Should be on the grid
+        expect(player.grid[0][5]).not.toBe(0); // Should not be zero
     });
 
-    test('Player should clear piece from the grid', () => {
-        const player = new Player('1', 'TestPlayer');
-        const piece = new Piece(SHAPES.O);
-        piece.x = 4;
-        piece.y = 18;
+    test('should not place piece if it is out of bounds', () => {
+        const piece = new Piece(SHAPES.I);
         player.setPiece(piece);
+        piece.x = 10; // Out of bounds
         player.placePiece(piece);
-        player.clearPieceFromGrid(piece);
-        expect(player.grid[piece.y].slice(piece.x, piece.x + piece.getMatrix()[0].length).every(cell => cell === 0)).toBe(true);
+        expect(player.grid[0][9]).toBe(0); // Should not place it
     });
-
-    test('Player should move piece to the bottom when "space" is pressed', () => {
-        const player = new Player('1', 'TestPlayer');
-        const piece = new Piece(SHAPES.O);
-        piece.x = 4; // Set the piece in the middle of the grid horizontally
-        piece.y = 0; // Start from the top of the grid
-        player.setPiece(piece);
-        // Simulate pressing 'space' to drop the piece to the bottom
-        player.movePiece('space');
-        // We expect the piece to be placed as low as possible without collision
-        expect(player.grid[18][4]).toBe(1); // Check the grid to confirm the piece was placed correctly
-        expect(player.grid[18][5]).toBe(1);
-        expect(player.grid[19][4]).toBe(1);
-        expect(player.grid[19][5]).toBe(1);
-    });
-
 });
