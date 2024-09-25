@@ -17,8 +17,8 @@ describe('MultiGame', () => {
 
     beforeEach(() => {
         // Mock players
-        owner = { id: 'ownerId', movePiece: jest.fn(), grid: [], nextPieces: [], currentPiece: null };
-        opponent = { id: 'opponentId', movePiece: jest.fn(), grid: [], nextPieces: [], currentPiece: null };
+        owner = new Player('ownerId', 'owner', true);
+        opponent = new Player('opponentId', 'opponent', true);
         
         // Create MultiGame instance
         multiGame = new MultiGame('room1');
@@ -80,27 +80,42 @@ describe('MultiGame', () => {
 
     test('should handle game loop logic', () => {
         jest.useFakeTimers(); // Use fake timers for the game loop
-    
+
         // Mock the movePiece method for both owner and opponent
         owner.movePiece = jest.fn().mockReturnValueOnce({ gameover: false, linesCleared: 0 });
         opponent.movePiece = jest.fn().mockReturnValueOnce({ gameover: false, linesCleared: 2 });
-    
+
         // Start the game loop
         multiGame.startGameLoop(io, owner);
-    
+        multiGame.startGameLoop(io, opponent);
+
         // Simulate the 'movePiece' event for the owner
         io.to = jest.fn().mockReturnValue({
             emit: jest.fn() // Mock emit method
         });
-    
+
         // Emit the movePiece event for the owner moving down
         io.to(owner.id).emit('movePiece', 'down');
+        io.to(opponent.id).emit('movePiece', 'down');
     
         // Advance timers to simulate the game loop iteration
         jest.advanceTimersByTime(1000); // Fast forward by 1 second
     
         // Check if freezing lines in the opponent's grid
-        expect(multiGame.owner.grid).toEqual(multiGame.freezeLinesGrid(1, opponent.grid)); // Check if owner's grid updated
+        expect(multiGame.owner.grid).toEqual(multiGame.freezeLinesGrid(0, owner.grid)); // Check if owner's grid updated
+        expect(multiGame.opponent.grid).toEqual(multiGame.freezeLinesGrid(0, opponent.grid)); // Check if opponent's grid updated
+
+        // Check gameover condition
+        
+        owner.movePiece = jest.fn().mockReturnValueOnce({ gameover: true, linesCleared: 0 });
+        opponent.movePiece = jest.fn().mockReturnValueOnce({ gameover: true, linesCleared: 0 });
+        io.to(owner.id).emit('movePiece', 'down');
+        io.to(opponent.id).emit('movePiece', 'down');
+        
+        jest.advanceTimersByTime(1000); // Fast forward by 1 second
+
+        expect(multiGame.isRunning).toEqual(false); // Check if opponent's grid updated
+
     });
 
     test('should freeze lines correctly', () => {

@@ -40,8 +40,7 @@ module.exports = (io) => {
             // Create room if it doesn't exist
             if (!rooms[requestedRoom]) {
                 rooms[requestedRoom] = new MultiGame(requestedRoom);
-                roomId = requestedRoom;
-                console.log(`Room ${roomId} created.`);
+                console.log(`Room ${requestedRoom} created.`);
             }
 
             game = rooms[requestedRoom];

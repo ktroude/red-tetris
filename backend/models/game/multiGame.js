@@ -81,9 +81,7 @@ class MultiGame {
 
                     // If multiple lines cleared, freeze lines in opponent's grid
                     if (linesCleared > 1) {
-                        console.log('Freeze operation performed');
                         this.opponent.grid = this.freezeLinesGrid(linesCleared - 1, this.opponent);
-                        console.log('Updated opponent grid:', this.opponent.grid);
                         io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
                     }
 
@@ -99,9 +97,7 @@ class MultiGame {
 
                     // If multiple lines cleared, freeze lines in the owner's grid
                     if (linesCleared > 1) {
-                        console.log('Freeze operation performed');
                         this.owner.grid = this.freezeLinesGrid(linesCleared - 1, this.owner);
-                        console.log('Updated owner grid:', this.owner.grid);
                         io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
                     }
 
@@ -121,7 +117,6 @@ class MultiGame {
                         return;
                     }
                     this.isRunning = false;
-                    console.log('GAME OVER SENT');
                 }
             }
         }, 1000); // Runs the game loop every second, no speed decrease in multiplayer mode
@@ -177,7 +172,6 @@ class MultiGame {
                 }
             }
         }
-        console.log(grid);
         return grid; // Return the updated grid
     }
 }
