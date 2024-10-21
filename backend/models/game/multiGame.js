@@ -1,5 +1,6 @@
 const PieceManager = require('../piece/pieceManager');
 const Piece = require('../piece/piece')
+const StorageProvider = require("../storage/StorageProvider.js")
 
 /**
  * Manages a multiplayer Tetris game, handling game logic and player interactions.
@@ -107,6 +108,9 @@ class MultiGame {
 
                 // Handle gameover logic
                 if (isGameOver) {
+
+                    const winnerPlayer = player.id === this.owner?.id ? this.opponent : this.owner;
+
                     if (player.id === this.owner?.id) {
                         io.to(this.owner.id).emit('gameOver');
                         io.to(this.opponent.id).emit('win');
@@ -116,6 +120,13 @@ class MultiGame {
                         io.to(this.owner.id).emit('win');
                         return;
                     }
+
+                    console.log(player.score);
+                    
+
+                    // TODO Implements the score on multi
+                    new StorageProvider().addMutliGame(9999, this.owner.name. this.opponent.name, winnerPlayer.name);
+                    
                     this.isRunning = false;
                 }
             }
@@ -128,6 +139,12 @@ class MultiGame {
      * to ensure identical gameplay and fair competition.
      */
     distributePieces() {
+
+        console.log("Owner", this.owner);
+        console.log("Opponent", this.opponent);
+        
+        
+
         if (this.owner && this.opponent) {
             // Generate and assign pieces for both players
             for (let i = 0; i < 20000; i++) {

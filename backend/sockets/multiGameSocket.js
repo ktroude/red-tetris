@@ -74,7 +74,7 @@ module.exports = (io) => {
 
             // Notify both players when the game is ready
             if (game.owner !== null && game.opponent !== null) {
-                io.to(game.opponent.id).emit('GameReady', game.opponent.nextPieces[0]);
+                // io.to(game.opponent.id).emit('GameReady', game.opponent.nextPieces[0]);
                 io.to(game.owner.id).emit('GameReady', game.owner.nextPieces[0]);
             }
 
@@ -85,6 +85,8 @@ module.exports = (io) => {
             socket.on('gameStart', () => {
                 console.log('Game started');
                 game.distributePieces();
+                console.log(player.nextPieces.length);
+                
                 game.startGameLoop(io, player);
                 try {
                     socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });

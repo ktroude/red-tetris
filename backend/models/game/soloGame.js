@@ -1,3 +1,4 @@
+const StorageProvider = require("../storage/StorageProvider.js")
 /**
  * Manages a single-player Tetris game, handling game logic and interactions for a single player.
  * This class is responsible for controlling the game flow, including game speed, player interactions,
@@ -84,6 +85,7 @@ class SoloGame {
         this.player.isPlaying = false; // Mark the player as no longer playing
         clearInterval(this.gameInterval); // Clear the game loop interval to stop the game
         io.to(socket.id).emit('gameOverSolo', { message: 'Game Over' }); // Notify the player that the game has ended
+        new StorageProvider().addSoloGame(this.player.score, this.player.name);
     }
 }
 
