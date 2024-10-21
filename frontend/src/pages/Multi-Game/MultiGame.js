@@ -86,17 +86,6 @@ function MultiGame() {
         setNextPiece(data.nextPiece);  // Update the next piece
       });
 
-      // Handle opponent-related events
-      if (isOwner) {
-        socket.on('opponentJoined', (data) => {
-          setOpponentName(data);  // Set the opponent's name when they join
-        });
-      } else {
-        socket.on('ownerIsHere', (data) => {
-          setOpponentName(data);  // Set the room owner's name
-        });
-      }
-
       socket.on('gameOver', () => {
         setGameOver(true);  // Handle game over event
       });
@@ -120,7 +109,22 @@ function MultiGame() {
         socket.off('win');
       };
     }
-  }, [socket, username, roomname, isOwner]);
+  }, [socket]);
+
+  useEffect(() => {
+    if (socket) {
+      // Handle opponent-related events
+      if (isOwner) {
+        socket.on('opponentJoined', (data) => {
+          setOpponentName(data);  // Set the opponent's name when they join
+        });
+      } else {
+        socket.on('ownerIsHere', (data) => {
+          setOpponentName(data);  // Set the room owner's name
+        });
+      }
+    }
+  });
 
   // Handle player movement and key presses
   useEffect(() => {
