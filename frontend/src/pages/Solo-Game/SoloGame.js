@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import GameBoard from '../../components/GameBoard/GameBoard';
+import { setSocket, disconnectSocket } from '../../redux/socketSlice'; // Actions Redux
+import './SoloGame.css';
 import { UserContext } from '../../Context/UserContext';
-import './SoloGame.css'
 
 function SoloGame() {
+  const dispatch = useDispatch();
   const { username } = useContext(UserContext);
+  const socket = useSelector((state) => state.socket.socketInstance); // Récupère le socket du store
   const [grid, setGrid] = useState(createEmptyGrid());
   const [gameOver, setGameOver] = useState(false);
-  const [socket, setSocket] = useState(null);
   const [nextPiece, setNextPiece] = useState(null);
   const [score, setScore] = useState(0);
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -18,18 +21,23 @@ function SoloGame() {
   }
 
   useEffect(() => {
-    const newSocket = io(apiUrl);
-    setSocket(newSocket);
+    if (socket === null) {
+      const newSocket = io(apiUrl);
+      dispatch(setSocket(newSocket));  // Stocker le socket dans Redux
 
-    console.log('Socket connected:', newSocket.id);
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
+      return () => {
+        try {
+          newSocket.disconnect();
+          dispatch(disconnectSocket()); // Déconnecter et réinitialiser le socket dans Redux
+        } catch (e) {
+          console.error('Error disconnecting socket:', e);
+        }
+      };
+    }
+  }, [apiUrl, dispatch]);
 
   useEffect(() => {
-    if (socket && username) {
+    if (socket) {
       socket.emit('joinSoloGame', { playerName: username });
 
       socket.on('initSolo', (data) => {
