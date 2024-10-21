@@ -67,7 +67,9 @@ class Player {
      *  and the number of lines cleared by the player after a mouvement.
      */
     movePiece(direction) {
-        if (!this.currentPiece) return { gameover: false, linesCleared: 0 };
+        if (!this.currentPiece) {
+            return { gameover: false, linesCleared: 0 };
+        }
 
         let piece = this.currentPiece;
         const previousX = piece.x;

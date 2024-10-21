@@ -42,7 +42,7 @@ class SoloGame {
         const gameLoop = () => {
             if (this.isRunning) { // Ensure the game is still running
                 // Move the player's piece down and check for game-over conditions
-                let result = this.player.movePiece('down'); 
+                let result = this.player.movePiece('down');
                 let isGameOver = result.gameover;
 
                 // Send the updated grid to the player

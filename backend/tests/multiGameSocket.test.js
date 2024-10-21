@@ -112,4 +112,90 @@ describe('MultiGame Socket.IO', () => {
             checkGameStarted();
         });
     }, 10000); // Set timeout to 10 seconds
+
+    // Test case for trying to join a full room
+    test('should not allow joining a full room', (done) => {
+        const roomId = 'room1';
+
+        // The first player joins as the owner
+        clientSocket1.emit('joinMultiGame', { playerName: 'Owner', requestedRoom: roomId });
+
+        // The second player joins as the opponent
+        clientSocket2.emit('joinMultiGame', { playerName: 'Opponent', requestedRoom: roomId });
+
+        // A third client tries to join
+        const clientSocket3 = new Client(`http://localhost:${io.httpServer.address().port}`);
+        clientSocket3.emit('joinMultiGame', { playerName: 'ExtraPlayer', requestedRoom: roomId });
+
+        clientSocket3.on('roomFull', (isFull) => {
+            expect(isFull).toBe(true); // Verify that the room is full
+            clientSocket3.close();
+            done();
+        });
+    });
+
+    // // Test case for starting the game and emitting nextPiece to both players
+    // test('should emit nextPiece to both players when the game starts', (done) => {
+    //     const roomId = 'room1';
+    //     const ownerName = 'Owner';
+    //     const opponentName = 'Opponent';
+        
+    //     // The owner and opponent join the game
+    //     clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId });
+    //     clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId });
+
+    //     clientSocket1.on('ownerIsHere', () => {
+    //         clientSocket1.emit('gameStart');
+    //     });
+
+    //     clientSocket1.on('nextPiece', (data) => {
+    //         expect(data).toHaveProperty('nextPiece'); // Verify that the nextPiece is sent
+    //         done();
+    //     });
+
+    //     clientSocket2.on('nextPiece', (data) => {
+    //         expect(data).toHaveProperty('nextPiece'); // Verify that the opponent receives nextPiece
+    //     });
+    // });
+
+    // Test case for handling opponent disconnection and notifying the owner
+    test('should handle opponent disconnection and notify the owner', (done) => {
+        const roomId = 'room1';
+        const ownerName = 'Owner';
+        const opponentName = 'Opponent';
+
+        // The owner and opponent join the game
+        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId });
+        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId });
+
+        clientSocket2.on('ownerIsHere', () => {
+            clientSocket2.close(); // Disconnect the opponent
+        });
+
+        clientSocket1.on('win', (message) => {
+            expect(message).toHaveProperty('message', 'You win!'); // Verify the owner receives win message
+            done();
+        });
+    });
+
+    // Test case for handling owner disconnection and notifying the opponent
+    test('should handle owner disconnection and notify the opponent', (done) => {
+        const roomId = 'room1';
+        const ownerName = 'Owner';
+        const opponentName = 'Opponent';
+
+        // The owner and opponent join the game
+        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId });
+        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId });
+
+        clientSocket1.on('opponentJoined', () => {
+            clientSocket1.close(); // Disconnect the owner
+        });
+
+        clientSocket2.on('win', (message) => {
+            expect(message).toHaveProperty('message', 'You win!'); // Verify the opponent receives win message
+            done();
+        });
+    });
+
 });

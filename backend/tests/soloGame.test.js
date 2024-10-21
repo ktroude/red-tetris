@@ -39,16 +39,36 @@ describe('SoloGame', () => {
     });
 
     test('should calculate game speed correctly', () => {
-        // Test with different scores
         player.score = 0;
-        expect(soloGame.calculateGameSpeed()).toBe(1000); // Initial speed at 0 score
-
-        player.score = 2000;
-        expect(soloGame.calculateGameSpeed()).toBe(900); // Speed should reduce with score
-
+        expect(soloGame.calculateGameSpeed()).toBe(1000);
+    
+        player.score = 500;
+        expect(soloGame.calculateGameSpeed()).toBe(1000); // Speed should still be 1000 as it hasn't reached the threshold
+    
+        player.score = 1000;
+        expect(soloGame.calculateGameSpeed()).toBe(950); // Speed should reduce to 950
+    
+        player.score = 5000;
+        expect(soloGame.calculateGameSpeed()).toBe(750); // Speed should reduce further
+    
+        player.score = 20000;
+        expect(soloGame.calculateGameSpeed()).toBe(100); // Speed should be capped at 200
+    
         player.score = 30000; // Excessive score to test speed cap
         expect(soloGame.calculateGameSpeed()).toBe(100); // Speed should not go below 100ms
     });
+
+    test('should end the game when game over condition is met', () => {
+        player.movePiece.mockReturnValueOnce({ gameover: true }); // Simule une condition de fin de jeu
+        soloGame.startGameLoop(io, socket);
+    
+        jest.advanceTimersByTime(soloGame.baseSpeed); // Avancez le timer
+    
+        expect(soloGame.isRunning).toBe(false); // Assurez-vous que le jeu est terminé
+        expect(io.to).toHaveBeenCalledWith(socket.id); // Vérifiez que l'ID du socket a été utilisé
+        expect(io.emit).toHaveBeenCalledWith('gameOverSolo', { message: 'Game Over' }); // Vérifiez que le message de fin de jeu a été envoyé
+    });
+    
 
     test('should start the game loop', () => {
         // Mock the player's movePiece method to return game over condition
@@ -74,4 +94,13 @@ describe('SoloGame', () => {
         expect(io.to).toHaveBeenCalledWith(socket.id); // Check if the socket ID was used
         expect(io.emit).toHaveBeenCalledWith('gameOverSolo', { message: 'Game Over' }); // Check if game over message was sent
     });
+
+
+    test('should start the game loop and call movePiece', () => {
+        player.movePiece.mockReturnValueOnce({ gameover: false, linesCleared:0 }); // Simulate game is running
+        soloGame.startGameLoop(io, socket);
+
+        expect(soloGame.isRunning).toBe(true); // Game is started
+    });
+    
 });
