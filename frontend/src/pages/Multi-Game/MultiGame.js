@@ -125,7 +125,7 @@ function MultiGame() {
   // Handle player movement and key presses
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (!socket) return;
+      if (!socket || win || gameOver) return;
       let direction;
       // Map key presses to movement directions
       switch (e.key) {
@@ -155,7 +155,7 @@ function MultiGame() {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);  // Remove event listener on cleanup
     };
-  }, [socket]);
+  }, [socket, gameOver, win]);
 
   return (
     <>

@@ -71,7 +71,7 @@ function SoloGame() {
 
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (!socket) return;
+      if (!socket || gameOver) return;
       let direction;
       switch (e.key) {
         case 'ArrowLeft':
@@ -99,7 +99,7 @@ function SoloGame() {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [socket]);
+  }, [socket, gameOver]);
 
   return (
     <div className='solo-game-container'>
