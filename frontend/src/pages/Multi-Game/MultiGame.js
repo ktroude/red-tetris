@@ -22,7 +22,7 @@ function MultiGame() {
   const [isOwner, setIsOwner] = useState(false);  // State to track if the player is the room owner
   const [isRoomFull, setIsRoomFull] = useState(false);  // State to track if the room is full
   const apiUrl = process.env.REACT_APP_API_URL;  // Get the API URL from environment variables
-
+  const [isPlayButtonDisplayed, setIsPlayButtonDisplayed] = useState(true);  // State to display the play button
   // Helper function to create an empty grid (20x10 matrix)
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
@@ -57,11 +57,6 @@ function MultiGame() {
       // Join the multiplayer game room
       socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomname });
 
-      // Handle game events and socket responses
-      socket.on('GameReady', () => {
-        socket.emit('gameStart');
-      });
-
       socket.on('init', (data) => {
         setGrid(data.grid);  // Initialize the player's grid
       });
@@ -83,6 +78,7 @@ function MultiGame() {
       });
 
       socket.on('nextPiece', (data) => {
+        console.log("nextPiece from ", username  , "  "  ,data  );
         setNextPiece(data.nextPiece);  // Update the next piece
       });
 
@@ -97,7 +93,6 @@ function MultiGame() {
       // Cleanup event listeners on component unmount
       return () => {
         socket.off('init');
-        socket.off('GameReady');
         socket.off('updateGrid');
         socket.off('isOwner');
         socket.off('roomFull');
@@ -129,7 +124,15 @@ function MultiGame() {
   // Handle player movement and key presses
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (!socket || win || gameOver) return;
+      console.log("handleKeyPress from ", username  , "  "  ,e  );
+      if (!socket || win || gameOver)
+        {
+          console.log("return from ", username  , "  "  );
+          console.log("socket from ", username  , "  "  ,socket?.id  );
+          console.log("win from ", username  , "  "  ,win  );
+          console.log("gameOver from ", username  , "  "  ,gameOver  );
+          return;
+        }
       let direction;
       // Map key presses to movement directions
       switch (e.key) {
@@ -153,6 +156,8 @@ function MultiGame() {
       }
       // Emit the movement event to the server
       socket.emit('movePiece', direction);
+          console.log("socket from ", username  , "  "  ,socket?.id  );
+          console.log("movePiece from ", username  , "  "  ,direction  );
     };
 
     document.addEventListener('keydown', handleKeyPress);  // Add keydown event listener
@@ -160,6 +165,14 @@ function MultiGame() {
       document.removeEventListener('keydown', handleKeyPress);  // Remove event listener on cleanup
     };
   }, [socket, gameOver, win]);
+
+
+  function handleStartGame() {
+    if (socket) {
+      socket.emit('launchGame');
+      setIsPlayButtonDisplayed(false);  // Hide the play button
+    }
+  }
 
   return (
     <>
@@ -176,6 +189,8 @@ function MultiGame() {
               </div>
             )}
             {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {win && <p className="win">You Win!</p>}  {/* Display win message */}
+            {isPlayButtonDisplayed && <button onClick={handleStartGame}>Play</button>}  {/* Display play button */}
           </div>
           
           <div className="opponent-section">

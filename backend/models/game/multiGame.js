@@ -60,7 +60,7 @@ class MultiGame {
      * @param {Object} io - The socket.io instance used for real-time communication.
      * @param {Player} player - The player requesting to start the game loop.
      */
-    startGameLoop(io, player) {
+    startGameLoop(io, playerId) {
         this.isRunning = true;
         let isGameOver = false;
         let linesCleared = 0;
@@ -74,7 +74,7 @@ class MultiGame {
                 }
 
                 // Handle game logic for the owner
-                if (player && player.id && player.id === this.owner?.id) {
+                if (playerId === this.owner?.id) {
                     let result = this.owner.movePiece('down');
                     isGameOver = result.gameover;
                     linesCleared = result.linesCleared;
@@ -90,7 +90,7 @@ class MultiGame {
                 }
 
                 // Handle game logic for the opponent
-                if (player && player.id && player.id === this.opponent?.id) {
+                if (playerId === this.opponent?.id) {
                     let result = this.opponent.movePiece('down');
                     isGameOver = result.gameover;
                     linesCleared = result.linesCleared;
@@ -107,11 +107,11 @@ class MultiGame {
 
                 // Handle gameover logic
                 if (isGameOver) {
-                    if (player.id === this.owner?.id) {
+                    if (playerId === this.owner?.id) {
                         io.to(this.owner.id).emit('gameOver');
                         io.to(this.opponent.id).emit('win');
                     }
-                    if (player.id === this.opponent?.id) {
+                    if (playerId === this.opponent?.id) {
                         io.to(this.opponent.id).emit('gameOver');
                         io.to(this.owner.id).emit('win');
                         return;

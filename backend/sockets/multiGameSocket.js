@@ -73,25 +73,18 @@ module.exports = (io) => {
             socket.join(requestedRoom);
 
             // Notify both players when the game is ready
-            if (game.owner !== null && game.opponent !== null) {
-                io.to(game.opponent.id).emit('GameReady', game.opponent.nextPieces[0]);
-                io.to(game.owner.id).emit('GameReady', game.owner.nextPieces[0]);
-            }
-
-            /**
-             * Event triggered when the game starts.
-             * This event distributes pieces to players and starts the game loop.
-             */
-            socket.on('gameStart', () => {
-                console.log('Game started');
-                game.distributePieces();
-                game.startGameLoop(io, player);
-                try {
-                    socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
+            socket.on('launchGame', () => {
+                if (game.owner !== null && game.opponent !== null) {
+                    game.distributePieces();
+                    game.startGameLoop(io, game.owner.id);
+                    game.startGameLoop(io, game.opponent.id);
+                    try {
+                        io.to(game.opponent.id).emit('nextPiece', { nextPiece: game.opponent.nextPieces[0].shape });
+                        io.to(game.owner.id).emit('nextPiece', { nextPiece: game.owner.nextPieces[0].shape });
                 } catch (e) {
-                    console.error('Error sending next piece:', e);
+                        console.error('Error sending next piece:', e);
+                    }
                 }
-            });
 
             /**
              * Event triggered when a player moves a piece.
@@ -101,8 +94,10 @@ module.exports = (io) => {
              * @param {string} direction - The direction in which the player wants to move the piece (left, right, down, etc.).
              */
             socket.on('movePiece', (direction) => {
-                if (player && player.isPlaying) {
 
+                console.log('movePiece:', direction);
+                console.log('player:', player?.id);
+                console.log('game:', game.isRunning);
                     // Prevent piece overflow on the right side
                     if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
                         return;
@@ -122,18 +117,18 @@ module.exports = (io) => {
                             game.opponent.grid = game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
                             io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                         }
-
-                        io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.grid });
+                        // io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.grid });
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
 
                     if (player.id === game.opponent.id) {
+                        console.log('opponent movePiece');
                         if (linesCleared > 1) {
                             game.owner.grid = game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
                             io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                         }
 
-                        io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.grid });
+                        // io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.grid });
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
 
@@ -148,7 +143,6 @@ module.exports = (io) => {
                         io.to(game.opponent.id).emit('gameOver', { message: 'Game Over :(' });
                         io.to(game.owner.id).emit('win', { message: 'You win!' });
                     }
-                }
             });
 
             /**
@@ -174,5 +168,7 @@ module.exports = (io) => {
                 console.log(`Client disconnected: ${socket.id}`);
             });
         });
+
     });
-}
+});
+};
