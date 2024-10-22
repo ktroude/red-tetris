@@ -18,6 +18,7 @@ class Player {
         this.id = id;   // player's socket id
         this.name = name; // player's username
         this.grid = this.createEmptyGrid(); // player's Tetris grid
+        this.spectraGrid = this.createEmptyGrid(); // grid used to display the opponent's grid in multiplayer mode
         this.currentPiece = null; // the piece currently being controlled by the player
         this.nextPieces = []; // queue of upcoming pieces
         this.score = 0; // scoring system
@@ -116,7 +117,10 @@ class Player {
             if (direction === 'down') {
                 this.placePiece(piece);
                 let linesCleared = this.clearFullLines();
-                this.generateNewPiece();
+                this.spectraGrid = this.grid.map(row => [...row]);
+                this.spectraGrid = this.spectraGrid.map(row =>
+                    row.map(cell => (cell === 0 ? 0 : 9))
+                );                this.generateNewPiece();
                 return { gameover: this.checkGameOver(), linesCleared: linesCleared };
             }
         }

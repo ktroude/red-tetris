@@ -95,10 +95,6 @@ module.exports = (io) => {
              * @param {string} direction - The direction in which the player wants to move the piece (left, right, down, etc.).
              */
             socket.on('movePiece', (direction) => {
-
-                console.log('movePiece:', direction);
-                console.log('player:', player?.id);
-                console.log('game:', game.isRunning);
                     // Prevent piece overflow on the right side
                     if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
                         return;
@@ -118,18 +114,17 @@ module.exports = (io) => {
                             game.opponent.grid = game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
                             io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                         }
-                        // io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.grid });
+                        // io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectatorGrid });
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
 
                     if (player.id === game.opponent.id) {
-                        console.log('opponent movePiece');
                         if (linesCleared > 1) {
                             game.owner.grid = game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
                             io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                         }
 
-                        // io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.grid });
+                        // io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectatorGrid });
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
 

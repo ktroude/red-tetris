@@ -1,16 +1,3 @@
-.game-board {
-  display: grid;
-  grid-template-columns: repeat(10, 30px);
-  grid-gap: 1px;
-  width: 300px;
-  height: 600px;
-  margin: auto;
-}
-
-.row {
-  display: flex;
-}
-
 .empty-cell {
   width: 30px;
   height: 30px;
@@ -18,65 +5,47 @@
   background-color: #000000;
 }
 
-.cyan{
-  background-color: #1ffcfd;
+.cell {
   width: 30px;
   height: 30px;
   border: 1px solid #858585;
+  border-radius: 5px; /* Coins arrondis */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Ombre */
+  transition: all 0.3s ease; /* Transition douce */
 }
 
-.orange{
-  background-color: #fdae2d;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #858585;
+.cyan {
+  background: linear-gradient(135deg, #1ffcfd, #00b2c8); /* Dégradé */
 }
 
-.red{
-  background-color: #fe291f;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #858585;
+.orange {
+  background: linear-gradient(135deg, #fdae2d, #e68a00);
 }
 
-.blue{
-  background-color: #3100fa;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #858585;
+.red {
+  background: linear-gradient(135deg, #fe291f, #c82c24);
 }
 
-.purple{
-  background-color: #9f00fa;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #858585;
+.blue {
+  background: linear-gradient(135deg, #3100fa, #1a0087);
 }
 
-.yellow{
-  background-color: #fcff3c;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #858585;
+.purple {
+  background: linear-gradient(135deg, #9f00fa, #70009d);
 }
 
-.green{
-  background-color: #00fe32;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #858585;
+.yellow {
+  background: linear-gradient(135deg, #fcff3c, #c3c900);
 }
 
-.white{
-  background-color: #e0e0e0;
-  width: 30px;
-  height: 30px;
-  border: 1px solid #858585;
+.green {
+  background: linear-gradient(135deg, #00fe32, #00a500);
 }
 
-.game-over {
-    color: red;
-    font-size: 24px;
-    text-align: center;
+.white {
+  background: linear-gradient(135deg, #e0e0e0, #b3b3b3);
 }
-  
+
+.cell:hover {
+  transform: translateY(-3px); /* Légère élévation au survol */
+}

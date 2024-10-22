@@ -9,7 +9,7 @@ import { UserContext } from '../../Context/UserContext';
 function SoloGame() {
   const dispatch = useDispatch();
   const { username } = useContext(UserContext);
-  const socket = useSelector((state) => state.socket.socketInstance); // Récupère le socket du store
+  const socket = useSelector((state) => state.socket.socketInstance);
   const [grid, setGrid] = useState(createEmptyGrid());
   const [gameOver, setGameOver] = useState(false);
   const [nextPiece, setNextPiece] = useState(null);
@@ -28,26 +28,25 @@ function SoloGame() {
   function playDropSound() {
     if (blockDropSound.current) {
       // Stop the previous sound
-      blockDropSound.current.pause();      // Arrête le son en cours
-      blockDropSound.current.currentTime = 0;  // Réinitialise à 0
+      blockDropSound.current.pause();
+      blockDropSound.current.currentTime = 0; 
   
       // Play the new sound
       blockDropSound.current.play();
     }
   }
-  
 
   useEffect(() => {
     if (socket === null) {
       const newSocket = io(apiUrl);
-      dispatch(setSocket(newSocket));  // Stocker le socket dans Redux
+      dispatch(setSocket(newSocket));  // Store the socket instance in Redux
 
       return () => {
         try {
           newSocket.disconnect();
-          dispatch(disconnectSocket()); // Déconnecter et réinitialiser le socket dans Redux
+          dispatch(disconnectSocket()); // Disconnect the socket instance in Redux
         } catch (e) {
-          console.error('Error disconnecting socket:', e);
+          console.log('Error disconnecting socket:', e);
         }
       };
     }

@@ -80,7 +80,10 @@ function MultiGame() {
       });
 
       socket.on('opponentUpdateGrid', (data) => {
-        setOpponentGrid(data.grid);  // Update the opponent's grid
+        console.log("data = " + data);
+        if (data.grid) {
+          setOpponentGrid(data.grid);  // Update the opponent's grid
+        }
       });
 
       socket.on('nextPiece', (data) => {

@@ -39,7 +39,7 @@ function Home() {
 
     function handleKeyDown(event) {
         if (event.key === 'Enter') {
-            handleClick();
+            navigateToMulti();
         }
     }
 
