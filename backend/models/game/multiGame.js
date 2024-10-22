@@ -87,7 +87,7 @@ class MultiGame {
                     }
 
                     io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
-                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.spectatorGrid });
+                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.spectraGrid });
                 }
 
                 // Handle game logic for the opponent
@@ -103,7 +103,7 @@ class MultiGame {
                     }
 
                     io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
-                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.spectatorGrid });
+                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.spectraGrid });
                 }
 
                 // Handle gameover logic

@@ -9,13 +9,13 @@
   width: 30px;
   height: 30px;
   border: 1px solid #858585;
-  border-radius: 5px; /* Coins arrondis */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Ombre */
-  transition: all 0.3s ease; /* Transition douce */
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
 }
 
 .cyan {
-  background: linear-gradient(135deg, #1ffcfd, #00b2c8); /* Dégradé */
+  background: linear-gradient(135deg, #1ffcfd, #00b2c8);
 }
 
 .orange {
@@ -44,8 +44,4 @@
 
 .white {
   background: linear-gradient(135deg, #e0e0e0, #b3b3b3);
-}
-
-.cell:hover {
-  transform: translateY(-3px); /* Légère élévation au survol */
 }

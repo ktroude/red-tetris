@@ -5,14 +5,14 @@ const GameBoard = ({ grid }) => {
   return (
     <div style={{ minHeight: 60, display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 30px)` }}>
       {grid.flat().map((cell, index) => {
-        let className = 'cell'; // Utilisation de la classe 'cell' par défaut
+        let className = 'cell';
 
         switch (cell) {
           case 0:
             className = 'empty-cell';
             break;
           case 1:
-            className += ' cyan'; // Ajout de la classe couleur
+            className += ' cyan';
             break;
           case 2:
             className += ' blue';

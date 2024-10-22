@@ -114,7 +114,7 @@ module.exports = (io) => {
                             game.opponent.grid = game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
                             io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                         }
-                        // io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectatorGrid });
+                        io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
 
@@ -124,7 +124,7 @@ module.exports = (io) => {
                             io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                         }
 
-                        // io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectatorGrid });
+                        io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectraGrid });
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
 
