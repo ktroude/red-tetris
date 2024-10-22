@@ -15,10 +15,10 @@ class StorageProvider {
     ensureFileExists() {
         if (!fs.existsSync(this.path)) {
             fs.writeFileSync(this.path, JSON.stringify({ games: [] }, null, 2), 'utf-8');
-            console.log(this.getContent());
+            // console.log(this.getContent());
         }
         else {
-            console.log(this.getContent());
+            // console.log(this.getContent());
         }
     }
 

@@ -121,11 +121,12 @@ class MultiGame {
                         return;
                     }
 
-                    console.log(player.score);
+                    console.log(this.opponent.name);
+                    console.log(this.owner.name);
                     
 
                     // TODO Implements the score on multi
-                    new StorageProvider().addMutliGame(9999, this.owner.name. this.opponent.name, winnerPlayer.name);
+                    // new StorageProvider().addMutliGame(9999, this.owner.name. this.opponent.name, winnerPlayer.name);
                     
                     this.isRunning = false;
                 }
@@ -143,8 +144,6 @@ class MultiGame {
         console.log("Owner", this.owner);
         console.log("Opponent", this.opponent);
         
-        
-
         if (this.owner && this.opponent) {
             // Generate and assign pieces for both players
             for (let i = 0; i < 20000; i++) {
@@ -165,7 +164,7 @@ class MultiGame {
             this.opponent.currentPiece = this.opponent.nextPieces.shift();
         }
     }
-
+    
     /**
      * Freezes lines in the grid of the opposing player.
      * This function is triggered when a player clears multiple lines, causing

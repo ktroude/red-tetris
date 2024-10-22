@@ -74,7 +74,7 @@ module.exports = (io) => {
 
             // Notify both players when the game is ready
             if (game.owner !== null && game.opponent !== null) {
-                // io.to(game.opponent.id).emit('GameReady', game.opponent.nextPieces[0]);
+                io.to(game.opponent.id).emit('GameReady', game.opponent.nextPieces[0]);
                 io.to(game.owner.id).emit('GameReady', game.owner.nextPieces[0]);
             }
 
@@ -85,11 +85,12 @@ module.exports = (io) => {
             socket.on('gameStart', () => {
                 console.log('Game started');
                 game.distributePieces();
-                console.log(player.nextPieces.length);
                 
                 game.startGameLoop(io, player);
                 try {
-                    socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
+                    console.log(player);
+                    if (player.nextPieces.length > 0)
+                        socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
                 } catch (e) {
                     console.error('Error sending next piece:', e);
                 }
@@ -104,14 +105,19 @@ module.exports = (io) => {
              */
             socket.on('movePiece', (direction) => {
                 if (player && player.isPlaying) {
-
-                    // Prevent piece overflow on the right side
-                    if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
-                        return;
-                    }
-                    // Prevent piece overflow on the left side
-                    if (direction === 'left' && (player.currentPiece.x === 0)) {
-                        return;
+                    
+                    console.log("Move piece 1 : ", player);
+                    
+                    if (player.currentPiece)
+                    {
+                        // Prevent piece overflow on the right side
+                        if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
+                            return;
+                        }
+                        // Prevent piece overflow on the left side
+                        if (direction === 'left' && (player.currentPiece.x === 0)) {
+                            return;
+                        }
                     }
 
                     let result = player.movePiece(direction);
@@ -139,8 +145,10 @@ module.exports = (io) => {
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
 
+                    console.log("Move piece 2 : ", player);
                     // Send the next piece to the current player
-                    io.to(player.id).emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
+                    if (player.nextPieces.length > 0)
+                        io.to(player.id).emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
 
                     // Handle game over and win conditions
                     if (isGameOver && player.id === game.owner.id) {
