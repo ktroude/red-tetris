@@ -108,10 +108,12 @@ class MultiGame {
                 // Handle gameover logic
                 if (isGameOver) {
                     if (playerId === this.owner?.id) {
+                        this.isRunning = false;
                         io.to(this.owner.id).emit('gameOver');
                         io.to(this.opponent.id).emit('win');
                     }
                     if (playerId === this.opponent?.id) {
+                        this.isRunning = false;
                         io.to(this.opponent.id).emit('gameOver');
                         io.to(this.owner.id).emit('win');
                         return;
@@ -129,6 +131,10 @@ class MultiGame {
      */
     distributePieces() {
         if (this.owner && this.opponent) {
+            this.opponent.grid = this.opponent.createEmptyGrid();
+            this.owner.grid = this.opponent.createEmptyGrid();
+            this.owner.nextPieces = [];
+            this.opponent.nextPieces = [];
             // Generate and assign pieces for both players
             for (let i = 0; i < 20000; i++) {
                 let piece = this.pieceManager.getNextPiece();

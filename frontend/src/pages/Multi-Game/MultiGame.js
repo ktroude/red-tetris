@@ -97,7 +97,7 @@ function MultiGame() {
         socket.off('win');
       };
     }
-  }, [socket, roomName]);
+  }, [socket]);
 
   useEffect(() => {
     if (socket) {
@@ -161,9 +161,11 @@ function MultiGame() {
 
 
   function handleStartGame() {
-    if (socket) {
+    if (socket && opponentName) {
       socket.emit('launchGame');
       setIsPlayButtonDisplayed(false);  // Hide the play button
+      setGameOver(false);  // Reset game over state
+      setWin(false);  // Reset win state
     }
   }
 

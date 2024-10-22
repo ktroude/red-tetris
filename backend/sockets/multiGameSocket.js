@@ -137,9 +137,11 @@ module.exports = (io) => {
 
                     // Handle game over and win conditions
                     if (isGameOver && player.id === game.owner.id) {
+                        game.isRunning = false;
                         io.to(game.owner.id).emit('gameOver', { message: 'Game Over :(' });
                         io.to(game.opponent.id).emit('win', { message: 'You win!' });
                     } else if (isGameOver && player.id === game.opponent.id) {
+                        game.isRunning = false;
                         io.to(game.opponent.id).emit('gameOver', { message: 'Game Over :(' });
                         io.to(game.owner.id).emit('win', { message: 'You win!' });
                     }
