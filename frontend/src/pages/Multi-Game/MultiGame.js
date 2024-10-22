@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
@@ -23,6 +23,19 @@ function MultiGame() {
   const [isRoomFull, setIsRoomFull] = useState(false);  // State to track if the room is full
   const apiUrl = process.env.REACT_APP_API_URL;  // Get the API URL from environment variables
   const [isPlayButtonDisplayed, setIsPlayButtonDisplayed] = useState(true);  // State to display the play button
+  const blockDropSound = useRef(null);  // Ref to store the block drop sound
+
+
+  useEffect(() => {
+    blockDropSound.current = new Audio('/bloc.mp3');
+  }, []);
+
+  function playDropSound () {
+    if (blockDropSound.current) {
+      blockDropSound.current.play();
+    }
+  };
+
   // Helper function to create an empty grid (20x10 matrix)
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
@@ -117,13 +130,8 @@ function MultiGame() {
   // Handle player movement and key presses
   useEffect(() => {
     const handleKeyPress = (e) => {
-      console.log("handleKeyPress from ", username  , "  "  ,e  );
       if (!socket || win || gameOver)
         {
-          console.log("return from ", username  , "  "  );
-          console.log("socket from ", username  , "  "  ,socket?.id  );
-          console.log("win from ", username  , "  "  ,win  );
-          console.log("gameOver from ", username  , "  "  ,gameOver  );
           return;
         }
       let direction;
@@ -149,8 +157,7 @@ function MultiGame() {
       }
       // Emit the movement event to the server
       socket.emit('movePiece', direction);
-          console.log("socket from ", username  , "  "  ,socket?.id  );
-          console.log("movePiece from ", username  , "  "  ,direction  );
+      playDropSound();
     };
 
     document.addEventListener('keydown', handleKeyPress);  // Add keydown event listener

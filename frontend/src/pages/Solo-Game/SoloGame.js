@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import GameBoard from '../../components/GameBoard/GameBoard';
@@ -15,10 +15,27 @@ function SoloGame() {
   const [nextPiece, setNextPiece] = useState(null);
   const [score, setScore] = useState(0);
   const apiUrl = process.env.REACT_APP_API_URL;
+  const blockDropSound = useRef(null);
 
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
   }
+
+  useEffect(() => {
+    blockDropSound.current = new Audio('/bloc.mp3');
+  }, []);
+
+  function playDropSound() {
+    if (blockDropSound.current) {
+      // Stop the previous sound
+      blockDropSound.current.pause();      // Arrête le son en cours
+      blockDropSound.current.currentTime = 0;  // Réinitialise à 0
+  
+      // Play the new sound
+      blockDropSound.current.play();
+    }
+  }
+  
 
   useEffect(() => {
     if (socket === null) {
@@ -93,6 +110,7 @@ function SoloGame() {
           return;
       }
       socket.emit('movePieceSolo', direction);
+      playDropSound();
     };
 
     document.addEventListener('keydown', handleKeyPress);

@@ -6,11 +6,13 @@ import Home from '../pages/Home/Home';
 import ProtectedRoute from '../Guard/ProtectedRoute';
 import SoloGame from '../pages/Solo-Game/SoloGame';
 import MultiGame from '../pages/Multi-Game/MultiGame';
+import BackgroundMusic from '../components/BackgroundMusic/BackgroundMusic';
 
 function App() {
   return (
       <Router>
           <UserProvider>
+            <BackgroundMusic />
               <Routes>
                   <Route path="/" element={<Login />} />
                   <Route path="/home" element={<ProtectedRoute element={Home} />} />

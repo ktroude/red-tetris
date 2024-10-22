@@ -34,16 +34,12 @@ function Home() {
     }
 
     function navigateToSolo() {
-        if (!checkUsername(roomName)) {
-            setIsError(true);
-        } else {
             navigate(`/solo/${username}`);
-        }
     }
 
     function handleKeyDown(event) {
         if (event.key === 'Enter') {
-            navigateToMulti();
+            handleClick();
         }
     }
 
