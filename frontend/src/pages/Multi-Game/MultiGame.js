@@ -6,6 +6,7 @@ import GameBoard from '../../components/GameBoard/GameBoard';
 import { setSocket, disconnectSocket } from '../../redux/socketSlice'; // Redux actions to manage socket instance
 import "./MultiGame.css";
 import { UserContext } from '../../Context/UserContext';
+import AppButton from '../../components/App-Button/AppButton';
 
 function MultiGame() {
   const dispatch = useDispatch();
@@ -80,6 +81,7 @@ function MultiGame() {
       });
 
       socket.on('win', () => {
+        setIsPlayButtonDisplayed(true);
         setWin(true);  // Handle win event
       });
 
@@ -174,6 +176,8 @@ function MultiGame() {
       {(isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
+          {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {win && <p className="win">You Win!</p>}  {/* Display win message */}
             <p>{username}'s Game</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
@@ -181,14 +185,16 @@ function MultiGame() {
                 <GameBoard grid={nextPiece} />  {/* Render the next piece */}
               </div>
             )}
-            {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
-            {win && <p className="win">You Win!</p>}  {/* Display win message */}
-            {isPlayButtonDisplayed && <button onClick={handleStartGame}>Play</button>}  {/* Display play button */}
+            {isPlayButtonDisplayed && 
+              <div className="play-button">
+                <AppButton onClick={handleStartGame}>Play</AppButton>
+              </div>
+            }  
           </div>
           
           <div className="opponent-section">
             <p>{opponentName || "Waiting for opponent..."}</p>  {/* Display opponent's name or waiting message */}
-            <GameBoard grid={opponentGrid} />  {/* Render the opponent's game board */}
+            {opponentName && <GameBoard grid={opponentGrid} />}
           </div>
         </div>
       )}
@@ -196,6 +202,8 @@ function MultiGame() {
       {(!isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
+            {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {win && <p className="win">You Win!</p>}  {/* Display win message */}
             <p>{username}</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
@@ -203,8 +211,6 @@ function MultiGame() {
                 <GameBoard grid={nextPiece} />  {/* Render the next piece */}
               </div>
             )}
-            {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
-            {win && <p className="win">You Win!</p>}  {/* Display win message */}
           </div>
 
           <div className="opponent-section">

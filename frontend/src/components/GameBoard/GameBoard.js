@@ -3,7 +3,7 @@ import './GameBoard.css';
 
 const GameBoard = ({ grid }) => {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 30px)` }}>
+    <div style={{ minHeight: 60 , display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 30px)` }}>
       {grid.flat().map((cell, index) => {
         let className;
 
