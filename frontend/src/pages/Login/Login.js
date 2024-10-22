@@ -16,12 +16,17 @@ function Login() {
     };
 
     function handleClick() {
-        console.log("Username entered: ", inputValue);
         if (!checkUserName(inputValue)) {
             setIsError(true);
         } else {
             setUsername(inputValue);
             navigate(`/home`);
+        }
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            handleClick();
         }
     }
 
@@ -35,6 +40,8 @@ function Login() {
             <AppInput
                 label={"Your username"}
                 placeholder="Username"
+                value={inputValue}
+                onKeyDown={handleKeyDown}
                 onChange={handleInputChange}
             />
             <AppButton onClick={handleClick}>START</AppButton>
