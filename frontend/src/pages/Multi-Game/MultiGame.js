@@ -70,7 +70,7 @@ function MultiGame() {
       });
 
       socket.on('nextPiece', (data) => {
-        console.log("nextPiece from ", username  , "  "  ,data  );
+        console.log("nextPiece from ", username, "  "  , data);
         setNextPiece(data.nextPiece);  // Update the next piece
       });
 
@@ -86,13 +86,11 @@ function MultiGame() {
       // Cleanup event listeners on component unmount
       return () => {
         socket.off('init');
-        socket.off('updateGrid');
         socket.off('isOwner');
         socket.off('roomFull');
+        socket.off('updateGrid');
         socket.off('opponentUpdateGrid');
         socket.off('nextPiece');
-        socket.off('opponentJoined');
-        socket.off('ownerIsHere');
         socket.off('gameOver');
         socket.off('win');
       };

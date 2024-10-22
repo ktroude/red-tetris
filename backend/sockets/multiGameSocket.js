@@ -85,6 +85,7 @@ module.exports = (io) => {
                         console.error('Error sending next piece:', e);
                     }
                 }
+            });
 
             /**
              * Event triggered when a player moves a piece.
@@ -169,8 +170,6 @@ module.exports = (io) => {
                 }
                 console.log(`Client disconnected: ${socket.id}`);
             });
-        });
-
     });
 });
 };

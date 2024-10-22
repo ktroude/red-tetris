@@ -66,6 +66,7 @@ class MultiGame {
         let linesCleared = 0;
 
         setInterval(() => {
+            if (!this.isRunning) return;
             if (this.isRunning) {
                 // Stop the game if either player disconnects
                 if (this.owner?.id === undefined || this.opponent?.id === undefined) {
