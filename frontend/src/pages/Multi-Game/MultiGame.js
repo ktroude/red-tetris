@@ -18,7 +18,6 @@ function MultiGame() {
   const [opponentName, setOpponentName] = useState(null);  // State to store the opponent's name
   const [nextPiece, setNextPiece] = useState(null);  // State to track the next piece to be played
   const { roomName } = useParams();  // Retrieve room name from the URL parameters
-  const [roomname, setRoomname] = useState("");  // State to store the room name
   const [isOwner, setIsOwner] = useState(false);  // State to track if the player is the room owner
   const [isRoomFull, setIsRoomFull] = useState(false);  // State to track if the room is full
   const apiUrl = process.env.REACT_APP_API_URL;  // Get the API URL from environment variables
@@ -27,13 +26,6 @@ function MultiGame() {
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
   }
-
-  // Set the room name based on the URL parameter
-  useEffect(() => {
-    if (roomName) {
-      setRoomname(roomName);
-    }
-  }, [roomName]);
 
   // Socket setup and cleanup
   useEffect(() => {
@@ -53,9 +45,9 @@ function MultiGame() {
   }, [apiUrl, dispatch]);
 
   useEffect(() => {
-    if (socket) {
+    if (socket && roomName) {
       // Join the multiplayer game room
-      socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomname });
+      socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomName });
 
       socket.on('init', (data) => {
         setGrid(data.grid);  // Initialize the player's grid
@@ -83,6 +75,7 @@ function MultiGame() {
       });
 
       socket.on('gameOver', () => {
+        setIsPlayButtonDisplayed(true);
         setGameOver(true);  // Handle game over event
       });
 
@@ -104,7 +97,7 @@ function MultiGame() {
         socket.off('win');
       };
     }
-  }, [socket]);
+  }, [socket, roomName]);
 
   useEffect(() => {
     if (socket) {
