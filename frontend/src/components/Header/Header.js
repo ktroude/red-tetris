@@ -87,8 +87,9 @@ function Header({ isLogin = false, musicRef }) {
                     </ul>
                 </nav>
             <h1 className="header-title middle">Red Tetris</h1>
-            <div 
-                    className="volume-control side" 
+            <div className='side reverse'>
+                <div 
+                    className="volume-control" 
                     onMouseEnter={handleMouseEnterVolumeControl} // Show the volume control box on hover
                     onMouseLeave={handleMouseLeaveVolumeControl} // Hide the volume control box on mouse leave
                 >
@@ -114,6 +115,7 @@ function Header({ isLogin = false, musicRef }) {
                         </div>
                     </div>
                 </div>
+            </div>
             </>
             }
         </header>

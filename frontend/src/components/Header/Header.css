@@ -21,6 +21,10 @@
     width: 33%;
 }
 
+.reverse{
+    display: flex;
+justify-content: flex-end;}
+
 a{
     cursor: pointer;
 }
@@ -81,6 +85,7 @@ a{
 }
 
 .volume-control {
+    width: 50px;
     position: relative;
     display: flex;
     flex-direction: row-reverse;
