@@ -6,6 +6,8 @@ import GameBoard from '../../components/GameBoard/GameBoard';
 import { setSocket, disconnectSocket } from '../../redux/socketSlice'; // Redux actions to manage socket instance
 import "./MultiGame.css";
 import { UserContext } from '../../Context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import AppButton from '../../components/App-Button/AppButton';
 
 function MultiGame() {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ function MultiGame() {
   const [isOwner, setIsOwner] = useState(false);  // State to track if the player is the room owner
   const [isRoomFull, setIsRoomFull] = useState(false);  // State to track if the room is full
   const apiUrl = process.env.REACT_APP_API_URL;  // Get the API URL from environment variables
+  const navigate = useNavigate();
 
   // Helper function to create an empty grid (20x10 matrix)
   function createEmptyGrid() {
@@ -177,7 +180,6 @@ function MultiGame() {
             )}
             {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
           </div>
-          
           <div className="opponent-section">
             <p>{opponentName || "Waiting for opponent..."}</p>  {/* Display opponent's name or waiting message */}
             <GameBoard grid={opponentGrid} />  {/* Render the opponent's game board */}
@@ -185,6 +187,7 @@ function MultiGame() {
         </div>
       )}
       
+
       {(!isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
@@ -196,8 +199,12 @@ function MultiGame() {
               </div>
             )}
             {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            
             {win && <p className="win">You Win!</p>}  {/* Display win message */}
           </div>
+          {gameOver && 
+            <AppButton onClick={() => navigate('/home')}>GO BACK TO HOME PAGE</AppButton>
+          }
 
           <div className="opponent-section">
             <p>{opponentName}'s Game</p>  {/* Display opponent's name */}

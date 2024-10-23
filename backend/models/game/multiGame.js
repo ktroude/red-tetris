@@ -110,6 +110,7 @@ class MultiGame {
                 if (isGameOver) {
 
                     const winnerPlayer = player.id === this.owner?.id ? this.opponent : this.owner;
+                    const loserPlayer = winnerPlayer.id !== this.owner?.id ? this.owner : this.opponent;
 
                     if (player.id === this.owner?.id) {
                         io.to(this.owner.id).emit('gameOver');
@@ -126,7 +127,7 @@ class MultiGame {
                     
 
                     // TODO Implements the score on multi
-                    // new StorageProvider().addMutliGame(9999, this.owner.name. this.opponent.name, winnerPlayer.name);
+                    new StorageProvider().addMutliGame(winnerPlayer.name, loserPlayer.name);
                     
                     this.isRunning = false;
                 }

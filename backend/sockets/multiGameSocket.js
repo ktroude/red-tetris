@@ -105,9 +105,7 @@ module.exports = (io) => {
              */
             socket.on('movePiece', (direction) => {
                 if (player && player.isPlaying) {
-                    
-                    console.log("Move piece 1 : ", player);
-                    
+                                        
                     if (player.currentPiece)
                     {
                         // Prevent piece overflow on the right side
@@ -145,7 +143,6 @@ module.exports = (io) => {
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
 
-                    console.log("Move piece 2 : ", player);
                     // Send the next piece to the current player
                     if (player.nextPieces.length > 0)
                         io.to(player.id).emit('nextPiece', { nextPiece: player.nextPieces[0].shape });

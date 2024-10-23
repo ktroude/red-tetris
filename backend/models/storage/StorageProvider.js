@@ -34,14 +34,12 @@ class StorageProvider {
     }
 
     // Ajoute une nouvelle partie avec score, usernames et gagnant
-    addMutliGame(score, username1, username2, winner) {
+    addMutliGame(winnerUsername, loserUsername) {
         const content = this.getContent();
         const newGame = {
             id: Date.now(), // Utilise le timestamp comme ID unique
-            score,
-            username1,
-            username2,
-            winner,
+            winnerUsername,
+            loserUsername,
             gameType : GameType.MULTI
         };
         content.games.push(newGame);
@@ -73,6 +71,12 @@ class StorageProvider {
     getGameById(id) {
         const content = this.getContent();
         return content.games.find(game => game.id === id);
+    }
+
+    getGamesByUsername(username) {
+        const content = this.getContent();
+
+        return content.games.filter(game => game.winnerUsername === username || game.loserUsername === username);
     }
 }
 
