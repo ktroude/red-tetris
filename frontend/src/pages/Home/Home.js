@@ -4,6 +4,7 @@ import AppInput from '../../components/App-Input/AppInput';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../Context/UserContext';
 import './Home.css';
+import Header from '../../components/Header/Header';
 
 function Home() {
     const [roomName, setRoomName] = useState('');
@@ -44,28 +45,31 @@ function Home() {
     }
 
     return (
-        <div className='home-container'>
-            {!isMultiChoosen && (
-                <>
-                    <div className='button-container'>
-                        <AppButton onClick={handleClick}>Start Multi</AppButton>
-                        <AppButton onClick={() => navigateToSolo()}>Start Solo</AppButton>
-                    </div>
-                </>
-            )}
-            {isMultiChoosen && (
-                <>
-                    <AppInput
-                        label="Join a room"
-                        placeholder={"Room name to join"}
-                        onChange={(event) => handleInputChange(setRoomName, event)}
-                        onKeyDown={handleKeyDown}
-                    />
-                    <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
-                    {isError && <p className="error-message">Error: Username must be 2-15 characters long and contain only alphanumeric characters.</p>}
-                </>
-            )}
-        </div>
+        <>
+            <Header />
+            <div className='home-container'>
+                {!isMultiChoosen && (
+                    <>
+                        <div className='button-container'>
+                            <AppButton onClick={handleClick}>Start Multi</AppButton>
+                            <AppButton onClick={() => navigateToSolo()}>Start Solo</AppButton>
+                        </div>
+                    </>
+                )}
+                {isMultiChoosen && (
+                    <>
+                        <AppInput
+                            label="Join a room"
+                            placeholder={"Room name to join"}
+                            onChange={(event) => handleInputChange(setRoomName, event)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
+                        {isError && <p className="error-message">Error: Username must be 2-15 characters long and contain only alphanumeric characters.</p>}
+                    </>
+                )}
+            </div>
+        </>
     );
 }
 

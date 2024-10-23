@@ -4,6 +4,7 @@ import AppButton from '../../components/App-Button/AppButton';
 import AppInput from '../../components/App-Input/AppInput';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../Context/UserContext';
+import Header from '../../components/Header/Header';
 
 function Login() {
     const { setUsername } = useContext(UserContext);
@@ -36,17 +37,20 @@ function Login() {
     }
 
     return (
-        <div className="app-container">
-            <AppInput
-                label={"Your username"}
-                placeholder="Username"
-                value={inputValue}
-                onKeyDown={handleKeyDown}
-                onChange={handleInputChange}
-            />
-            <AppButton onClick={handleClick}>START</AppButton>
-            {isError && <p className="error-message">Error: Roomname must be 2-15 characters long and contain only alphanumeric characters.</p>}
-        </div>
+        <>
+            <Header isLogin={true} />
+            <div className="app-container">
+                <AppInput
+                    label={"Your username"}
+                    placeholder="Username"
+                    value={inputValue}
+                    onKeyDown={handleKeyDown}
+                    onChange={handleInputChange}
+                />
+                <AppButton onClick={handleClick}>START</AppButton>
+                {isError && <p className="error-message">Error: Roomname must be 2-15 characters long and contain only alphanumeric characters.</p>}
+            </div>
+        </>
     );
 }
 

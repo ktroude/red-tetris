@@ -5,6 +5,7 @@ import GameBoard from '../../components/GameBoard/GameBoard';
 import { setSocket, disconnectSocket } from '../../redux/socketSlice'; // Actions Redux
 import './SoloGame.css';
 import { UserContext } from '../../Context/UserContext';
+import Header from '../../components/Header/Header';
 
 function SoloGame() {
   const dispatch = useDispatch();
@@ -119,16 +120,19 @@ function SoloGame() {
   }, [socket, gameOver]);
 
   return (
-    <div className='solo-game-container'>
-      <GameBoard grid={grid} />
-          {nextPiece && (
-            <div className="next-piece">
-              <GameBoard grid={nextPiece} />
-            </div>
-          )}
-          <h3>Score: {score}</h3>
-      {gameOver && <p className="game-over">Game Over</p>}
-    </div>
+    <>
+      <Header />
+      <div className='solo-game-container'>
+        <GameBoard grid={grid} />
+            {nextPiece && (
+              <div className="next-piece">
+                <GameBoard grid={nextPiece} />
+              </div>
+            )}
+            <h3>Score: {score}</h3>
+        {gameOver && <p className="game-over">Game Over</p>}
+      </div>
+    </>
   );
 }
 

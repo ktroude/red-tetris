@@ -1,8 +1,7 @@
 .solo-game-container{
-    height: calc(100vh - 4px);
-    width: calc(100vw - 4px);
+    height: calc(100vh - 125px);
+    width: 100vw;
     background-color: #000;
-    border: 2px solid #ff0000;
     display: flex;
     flex-direction: row;
     justify-content: center;
