@@ -9,10 +9,10 @@ const BackgroundMusic = ({ setMusicRef }) => {
     if (username) {
       musicRef.current = new Audio('/Tetris.mp3');
       musicRef.current.loop = true;
-      musicRef.current.volume = 0.5; // Volume par défaut
+      musicRef.current.volume = 0.5;
       musicRef.current.play();
 
-      setMusicRef(musicRef); // Passer la référence à la musique
+      setMusicRef(musicRef);
 
       return () => {
         if (musicRef.current) {
@@ -23,7 +23,7 @@ const BackgroundMusic = ({ setMusicRef }) => {
     }
   }, [username, setMusicRef]);
 
-  return null; // Nothing to render
+  return null;
 };
 
 export default BackgroundMusic;

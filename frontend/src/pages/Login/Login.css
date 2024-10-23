@@ -10,6 +10,7 @@
   box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
   gap: 20px;
   animation: fadeIn 1.5s ease-in-out;
+  overflow: hidden;
 }
 
 @keyframes fadeIn {
@@ -42,12 +43,6 @@
   text-transform: uppercase;
 }
 
-input:focus {
-  box-shadow: 0 0 20px rgba(255, 0, 0, 1);
-  border-color: #ff4d4d;
-  animation: glow 1.5s infinite alternate;
-}
-
 @keyframes glow {
   0% {
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
@@ -64,6 +59,7 @@ input:focus {
   margin-top: 10px;
   text-align: center;
   animation: shake 0.8s;
+  z-index: 5;
 }
 
 @keyframes shake {

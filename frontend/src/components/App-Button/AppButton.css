@@ -1,5 +1,6 @@
 /* Bouton amélioré */
 .AppButton {
+    z-index: 2;
     font-family: 'Press Start 2P', cursive;
     width: 200px;
     height: 50px;
