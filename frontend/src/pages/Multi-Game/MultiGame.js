@@ -7,7 +7,6 @@ import { setSocket, disconnectSocket } from '../../redux/socketSlice'; // Redux 
 import "./MultiGame.css";
 import { UserContext } from '../../Context/UserContext';
 import AppButton from '../../components/App-Button/AppButton';
-import Header from '../../components/Header/Header';
 
 function MultiGame() {
   const dispatch = useDispatch();
@@ -182,7 +181,6 @@ function MultiGame() {
 
   return (
     <>
-      <Header />
       {isRoomFull && 
         <div className="multi-game-container">
           <p className='error-message'>This room is full, try another one</p>

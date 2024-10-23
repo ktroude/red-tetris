@@ -5,7 +5,6 @@ import GameBoard from '../../components/GameBoard/GameBoard';
 import { setSocket, disconnectSocket } from '../../redux/socketSlice'; // Actions Redux
 import './SoloGame.css';
 import { UserContext } from '../../Context/UserContext';
-import Header from '../../components/Header/Header';
 
 function SoloGame() {
   const dispatch = useDispatch();
@@ -121,7 +120,6 @@ function SoloGame() {
 
   return (
     <>
-      <Header />
       <div className='solo-game-container'>
         <GameBoard grid={grid} />
             {nextPiece && (

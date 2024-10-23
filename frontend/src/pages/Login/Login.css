@@ -34,33 +34,13 @@
 }
 
   
-  .form-label {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 16px;
-    color: #ff4d4d;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-  }
-  
-  input {
-    font-family: 'Press Start 2P', cursive;
-    margin-bottom: 20px;
-    border-radius: 7px;
-    width: 250px;
-    padding: 10px;
-    border: 2px solid #ff0000;
-    background-color: #1a1a1a;
-    color: #fff;
-    font-size: 16px;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-    outline: none;
-    transition: all 0.3s ease;
-  }
-
-  p {
-    font-family: 'Press Start 2P', cursive;
-    color: #4d4c4c;
-  }
+.form-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 16px;
+  color: #ff4d4d;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
 
 input:focus {
   box-shadow: 0 0 20px rgba(255, 0, 0, 1);

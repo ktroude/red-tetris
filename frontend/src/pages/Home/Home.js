@@ -4,7 +4,6 @@ import AppInput from '../../components/App-Input/AppInput';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../Context/UserContext';
 import './Home.css';
-import Header from '../../components/Header/Header';
 
 function Home() {
     const [roomName, setRoomName] = useState('');
@@ -46,7 +45,6 @@ function Home() {
 
     return (
         <>
-            <Header />
             <div className='home-container'>
                 {!isMultiChoosen && (
                     <>
