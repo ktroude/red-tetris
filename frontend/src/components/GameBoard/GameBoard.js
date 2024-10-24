@@ -45,7 +45,6 @@ const GameBoard = ({ grid, showBorders = true }) => {
             className = 'no-display';
           }
           className += ' no-border';
-          console.log('classname = ' + className);
         }
         else {
           className += ' border'

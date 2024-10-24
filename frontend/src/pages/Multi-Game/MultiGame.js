@@ -192,14 +192,14 @@ function MultiGame() {
           <div className="player-section">
           {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
             {win && <p className="win">You Win!</p>}  {/* Display win message */}
-            <p>{username}'s Game</p>
+            <p className='text'>{username}'s Game</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
               <div className="next-piece">
                 <GameBoard grid={nextPiece} />  {/* Render the next piece */}
               </div>
             )}
-            {isPlayButtonDisplayed && 
+            {(isPlayButtonDisplayed && isOwner) && 
               <div className="play-button">
                 <AppButton onClick={handleStartGame}>Play</AppButton>
               </div>
@@ -207,7 +207,7 @@ function MultiGame() {
           </div>
           
           <div className="opponent-section">
-            <p>{opponentName || "Waiting for opponent..."}</p>  {/* Display opponent's name or waiting message */}
+            <p className='text'>{opponentName || "Waiting for opponent..."}</p>  {/* Display opponent's name or waiting message */}
             {opponentName && <GameBoard grid={opponentGrid} />}
           </div>
         </div>
@@ -218,7 +218,7 @@ function MultiGame() {
           <div className="player-section">
             {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
             {win && <p className="win">You Win!</p>}  {/* Display win message */}
-            <p>{username}</p>
+            <p className='text'>{username}</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
               <div className="next-piece">
@@ -228,7 +228,7 @@ function MultiGame() {
           </div>
 
           <div className="opponent-section">
-            <p>{opponentName}'s Game</p>  {/* Display opponent's name */}
+            <p className='text'>{opponentName}'s Game</p>  {/* Display opponent's name */}
             <GameBoard grid={opponentGrid} />  {/* Render the opponent's game board */}
           </div>
         </div>

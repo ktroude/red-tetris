@@ -111,7 +111,8 @@ module.exports = (io) => {
                     // Update the grids of both players
                     if (player.id === game.owner.id) {
                         if (linesCleared > 1) {
-                            game.opponent.grid = game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
+                            console.log('1111111  OWNER CLEARED ' + linesCleared + ' lines')
+                            game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
                             io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                         }
                         io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
@@ -120,7 +121,7 @@ module.exports = (io) => {
 
                     if (player.id === game.opponent.id) {
                         if (linesCleared > 1) {
-                            game.owner.grid = game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
+                            game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
                             io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                         }
 

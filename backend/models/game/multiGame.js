@@ -82,7 +82,8 @@ class MultiGame {
 
                     // If multiple lines cleared, freeze lines in opponent's grid
                     if (linesCleared > 1) {
-                        this.opponent.grid = this.freezeLinesGrid(linesCleared - 1, this.opponent);
+                        console.log('222222222  OWNER CLEARED ' + linesCleared + ' lines')
+                        this.freezeLinesGrid(linesCleared - 1, this.opponent.grid);
                         io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
                     }
 
@@ -98,7 +99,7 @@ class MultiGame {
 
                     // If multiple lines cleared, freeze lines in the owner's grid
                     if (linesCleared > 1) {
-                        this.owner.grid = this.freezeLinesGrid(linesCleared - 1, this.owner);
+                        this.freezeLinesGrid(linesCleared - 1, this.owner.grid);
                         io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
                     }
 

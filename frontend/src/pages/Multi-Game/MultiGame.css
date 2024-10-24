@@ -10,6 +10,13 @@
     overflow: hidden;
 }
 
+.text {
+  font-family: 'Press Start 2P', cursive;
+  color: rgb(128, 128, 128);
+    font-size: 24px;
+    font-weight: bold;
+}
+
 .next-piece {
     display: grid;
     grid-template-columns: repeat(4, 30px);
@@ -17,6 +24,7 @@
 }
 
 .win{
+  font-family: 'Press Start 2P', cursive;
     color: rgb(89, 172, 7);
     font-size: 24px;
     font-weight: bold;
@@ -31,6 +39,7 @@
 
 
 .game-over {
+    font-family: 'Press Start 2P', cursive;
     color: red;
     font-size: 24px;
     font-weight: bold;
