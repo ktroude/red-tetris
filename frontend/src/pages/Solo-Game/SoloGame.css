@@ -1,5 +1,5 @@
 .solo-game-container{
-    height: calc(100vh - 125px);
+    height: calc(100vh - 105px);
     width: 100vw;
     background-color: #000;
     display: flex;
@@ -21,3 +21,9 @@ h3 {
     font-weight: bold;
 }
   
+.game-over {
+    font-family: 'Press Start 2P', cursive;
+    color: red;
+    font-size: 24px;
+    font-weight: bold;
+}

@@ -1,12 +1,12 @@
 .multi-game-container{
-    height: calc(100vh - 125px);
+    height: calc(100vh - 105px);
     width: 100vw;
     background-color: #000;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 50px;
+    gap: 20px;
     overflow: hidden;
 }
 
@@ -37,5 +37,5 @@
 }
 
 .play-button{
-    margin-top: 30px;
+    margin-top: 10px;
 }

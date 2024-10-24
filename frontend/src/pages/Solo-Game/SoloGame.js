@@ -122,13 +122,15 @@ function SoloGame() {
     <>
       <div className='solo-game-container'>
         <GameBoard grid={grid} />
-            {nextPiece && (
-              <div className="next-piece">
-                <GameBoard grid={nextPiece} />
-              </div>
-            )}
-            <h3>Score: {score}</h3>
-        {gameOver && <p className="game-over">Game Over</p>}
+        <div>
+          {nextPiece && (
+            <div className="next-piece">
+              <GameBoard grid={nextPiece} showBorders={false} />
+            </div>
+          )}
+          <h3>Score: {score}</h3>
+          {gameOver && <p className="game-over">Game Over</p>}
+        </div>
       </div>
     </>
   );

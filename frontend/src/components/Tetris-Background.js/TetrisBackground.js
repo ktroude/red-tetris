@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SHAPES } from './shapes';
 import GameBoard from '../GameBoard/GameBoard';
 import './TetrisBackground.css';
@@ -9,7 +9,7 @@ const getRandomShape = () => {
 };
 
 const TetrisBackground = ({ xPercentage, yPercentage }) => {
-  const [currentPiece, setCurrentPiece] = useState(getRandomShape());
+  const [currentPiece] = useState(getRandomShape());
   const timer = getRandomTimer(2, 7);
 
   function getRandomTimer(min, max) {
@@ -25,7 +25,7 @@ const TetrisBackground = ({ xPercentage, yPercentage }) => {
 
   return (
       <div className="falling-piece" style={pieceStyle}>
-        <GameBoard grid={currentPiece} />
+        <GameBoard grid={currentPiece} showBorders={false} />
       </div>
   );
 };

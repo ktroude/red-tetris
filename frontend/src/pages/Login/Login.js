@@ -38,20 +38,18 @@ function Login() {
 
     return (
         <>
-            <TetrisBackground xPercentage={5} yPercentage={10} showBorders={false} />
-            <TetrisBackground xPercentage={18} yPercentage={50} showBorders={false} />
-            <TetrisBackground xPercentage={13} yPercentage={34} showBorders={false} />
-            <TetrisBackground xPercentage={25} yPercentage={82} showBorders={false} />
-            <TetrisBackground xPercentage={30} yPercentage={42} showBorders={false} />
-            <TetrisBackground xPercentage={35} yPercentage={14} showBorders={false}/>
-            <TetrisBackground xPercentage={42} yPercentage={34} showBorders={false} />
-            <TetrisBackground xPercentage={50} yPercentage={52} showBorders={false} />
-            <TetrisBackground xPercentage={58} yPercentage={21} showBorders={false} />
-            <TetrisBackground xPercentage={65} yPercentage={63} showBorders={false} />
-            <TetrisBackground xPercentage={72} yPercentage={89} showBorders={false} />
-            <TetrisBackground xPercentage={80} yPercentage={2} showBorders={false} />
-            <TetrisBackground xPercentage={86} yPercentage={56} showBorders={false} />
-            <TetrisBackground xPercentage={93} yPercentage={23} showBorders={false} />
+            <TetrisBackground xPercentage={3} />
+            <TetrisBackground xPercentage={11} />
+            <TetrisBackground xPercentage={19} />
+            <TetrisBackground xPercentage={27} />
+            <TetrisBackground xPercentage={35} />
+            <TetrisBackground xPercentage={43} />
+            <TetrisBackground xPercentage={51} />
+            <TetrisBackground xPercentage={59} />
+            <TetrisBackground xPercentage={67} />
+            <TetrisBackground xPercentage={75} />
+            <TetrisBackground xPercentage={83} />
+            <TetrisBackground xPercentage={91} />
             <div className="app-container">
                 <AppInput
                     label={"Your username"}
