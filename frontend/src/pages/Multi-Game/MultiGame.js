@@ -201,7 +201,7 @@ function MultiGame() {
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && !isPlayButtonDisplayed && (
               <div className="next-piece">
-                <GameBoard grid={nextPiece} />  {/* Render the next piece */}
+                <GameBoard grid={nextPiece} showBorders={false} />  {/* Render the next piece */}
               </div>
             )}
             {(isPlayButtonDisplayed && isOwner) && 
@@ -227,7 +227,7 @@ function MultiGame() {
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
               <div className="next-piece">
-                <GameBoard grid={nextPiece} />  {/* Render the next piece */}
+                <GameBoard grid={nextPiece} showBorders={false} />  {/* Render the next piece */}
               </div>
             )}
           </div>
