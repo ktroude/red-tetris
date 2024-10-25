@@ -26,7 +26,7 @@
 .win{
   font-family: 'Press Start 2P', cursive;
     color: rgb(89, 172, 7);
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -41,10 +41,14 @@
 .game-over {
     font-family: 'Press Start 2P', cursive;
     color: red;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
 }
 
 .play-button{
     margin-top: 10px;
+}
+
+.litle{
+    height: 30px;
 }

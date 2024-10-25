@@ -75,10 +75,12 @@ module.exports = (io) => {
             // Notify both players when the game is ready
             socket.on('launchGame', () => {
                 if (game.owner !== null && game.opponent !== null) {
+
                     game.distributePieces();
-                    game.startGameLoop(io, game.owner.id);
-                    game.startGameLoop(io, game.opponent.id);
+                    game.startGameLoop(io);
                     try {
+                        io.to(game.opponent.id).emit('restart');
+                        io.to(game.owner.id).emit('restart');
                         io.to(game.opponent.id).emit('nextPiece', { nextPiece: game.opponent.nextPieces[0].shape });
                         io.to(game.owner.id).emit('nextPiece', { nextPiece: game.owner.nextPieces[0].shape });
                 } catch (e) {
@@ -95,54 +97,59 @@ module.exports = (io) => {
              * @param {string} direction - The direction in which the player wants to move the piece (left, right, down, etc.).
              */
             socket.on('movePiece', (direction) => {
-                    // Prevent piece overflow on the right side
-                    if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
-                        return;
-                    }
-                    // Prevent piece overflow on the left side
-                    if (direction === 'left' && (player.currentPiece.x === 0)) {
-                        return;
-                    }
+                if (!game.isRunning) {
+                    return;
+                }
+                // Prevent piece overflow on the right side
+                if (direction === 'right' && (player.currentPiece.x + player.currentPiece.getMatrix()[0].length > 9)) {
+                    return;
+                }
+                // Prevent piece overflow on the left side
+                if (direction === 'left' && (player.currentPiece.x === 0)) {
+                    return;
+                }
 
-                    let result = player.movePiece(direction);
-                    let isGameOver = result.gameover;
-                    let linesCleared = result.linesCleared;
+                let result = player.movePiece(direction);
+                let isGameOver = result.gameover;
+                let linesCleared = result.linesCleared;
 
-                    // Update the grids of both players
-                    if (player.id === game.owner.id) {
-                        if (linesCleared > 1) {
-                            console.log('1111111  OWNER CLEARED ' + linesCleared + ' lines')
-                            game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
-                            io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
-                        }
-                        io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
+                // Update the grids of both players
+                if (player.id === game.owner.id) {
+                    if (linesCleared > 1) {
+                        console.log('1111111  OWNER CLEARED ' + linesCleared + ' lines')
+                        game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
+                        io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
+                    }
+                    io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
+                    io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
+                }
+
+                if (player.id === game.opponent.id) {
+                    if (linesCleared > 1) {
+                        game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
 
-                    if (player.id === game.opponent.id) {
-                        if (linesCleared > 1) {
-                            game.freezeLinesGrid(linesCleared - 1, game.owner.grid);
-                            io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
-                        }
+                    io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectraGrid });
+                    io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
+                }
 
-                        io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectraGrid });
-                        io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
-                    }
+                // Send the next piece to the current player
+                io.to(player.id).emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
 
-                    // Send the next piece to the current player
-                    io.to(player.id).emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
-
-                    // Handle game over and win conditions
-                    if (isGameOver && player.id === game.owner.id) {
-                        game.isRunning = false;
-                        io.to(game.owner.id).emit('gameOver', { message: 'Game Over :(' });
-                        io.to(game.opponent.id).emit('win', { message: 'You win!' });
-                    } else if (isGameOver && player.id === game.opponent.id) {
-                        game.isRunning = false;
-                        io.to(game.opponent.id).emit('gameOver', { message: 'Game Over :(' });
-                        io.to(game.owner.id).emit('win', { message: 'You win!' });
-                    }
-            });
+                // Handle game over and win conditions
+                if (game.isRunning && isGameOver && player.id === game.owner.id) {
+                    game.clearInterval();
+                    game.isRunning = false;
+                    io.to(game.owner.id).emit('gameOver', { message: 'Game Over :(' });
+                    io.to(game.opponent.id).emit('win', { message: 'You win!' });
+                } else if (game.isRunning && isGameOver && player.id === game.opponent.id) {
+                    game.clearInterval();
+                    game.isRunning = false;
+                    io.to(game.opponent.id).emit('gameOver', { message: 'Game Over :(' });
+                    io.to(game.owner.id).emit('win', { message: 'You win!' });
+                }
+        });
 
             /**
              * Event triggered when a client disconnects from the server.
@@ -150,14 +157,23 @@ module.exports = (io) => {
              * If the owner disconnects, the room is closed, and both players are removed.
              */
             socket.on('disconnect', () => {
-                if (game.opponent && player.id === game.opponent.id) {
+                if (player.id === game?.opponent?.id) {
+                    console.log('game is runnig before: ', game.isRunning);
                     game.removeOpponent();
-                    io.to(game.owner.id).emit('win', { message: 'You win!' });
-                    console.log(`Opponent ${socket.id} disconnected from room ${requestedRoom}`);
+                    if (game.isRunning) {
+                        io.to(game.owner.id).emit('win', { message: 'You win!' });
+                        console.log(`Opponent ${socket.id} disconnected from room ${requestedRoom}`);
+                        game.clearInterval()
+                        game.isRunning = false;
+                    }
+                    io.to(game.owner.id).emit('opponentJoined', null);
                 }
                 if (game.owner && player.id === game.owner.id) {
                     if (game.opponent) {
-                        io.to(game.opponent.id).emit('win', { message: 'You win!' });
+                        if (game.isRunning ) {
+                            io.to(game.opponent.id).emit('win', { message: 'You win!' });
+                            game.isRunning = false;
+                        }
                         game.removeOpponent();
                     }
                     game.removeOwner();
@@ -165,6 +181,7 @@ module.exports = (io) => {
                     console.log(`Owner ${socket.id} disconnected and room ${requestedRoom} is closed.`);
                 }
                 console.log(`Client disconnected: ${socket.id}`);
+                console.log('game is runnig after: ', game.isRunning);
             });
     });
 });

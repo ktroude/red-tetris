@@ -25,22 +25,6 @@ function MultiGame() {
   const [isPlayButtonDisplayed, setIsPlayButtonDisplayed] = useState(true);  // State to display the play button
   const blockDropSound = useRef(null);  // Ref to store the block drop sound
 
-
-  useEffect(() => {
-    blockDropSound.current = new Audio('/bloc.mp3');
-  }, []);
-
-  function playDropSound () {
-    if (blockDropSound.current) {
-      blockDropSound.current.play();
-    }
-  };
-
-  // Helper function to create an empty grid (20x10 matrix)
-  function createEmptyGrid() {
-    return Array.from({ length: 20 }, () => Array(10).fill(0));
-  }
-
   // Socket setup and cleanup
   useEffect(() => {
     if (socket === null) {
@@ -59,12 +43,32 @@ function MultiGame() {
   }, [apiUrl, dispatch]);
 
   useEffect(() => {
+    blockDropSound.current = new Audio('/bloc.mp3');
+  }, []);
+
+  function playDropSound () {
+    if (blockDropSound.current) {
+      blockDropSound.current.play();
+    }
+  };
+
+  // Helper function to create an empty grid (20x10 matrix)
+  function createEmptyGrid() {
+    return Array.from({ length: 20 }, () => Array(10).fill(0));
+  }
+
+  useEffect(() => {
     if (socket && roomName) {
       // Join the multiplayer game room
       socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomName });
 
       socket.on('init', (data) => {
         setGrid(data.grid);  // Initialize the player's grid
+      });
+
+      socket.on('restart', () => {
+        setGameOver(false);  // Reset game over state
+        setWin(false);  // Reset win state
       });
 
       socket.on('isOwner', () => {
@@ -120,6 +124,7 @@ function MultiGame() {
       // Handle opponent-related events
       if (isOwner) {
         socket.on('opponentJoined', (data) => {
+          console.log("opponentJoined = " + data);
           setOpponentName(data);  // Set the opponent's name when they join
         });
       } else {
@@ -190,18 +195,18 @@ function MultiGame() {
       {(isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
-          {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
-            {win && <p className="win">You Win!</p>}  {/* Display win message */}
+          {(!win && gameOver) && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {(!gameOver && win) && <p className="win">You Win!</p>}  {/* Display win message */}
             <p className='text'>{username}'s Game</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
-            {nextPiece && (
+            {nextPiece && !isPlayButtonDisplayed && (
               <div className="next-piece">
                 <GameBoard grid={nextPiece} />  {/* Render the next piece */}
               </div>
             )}
             {(isPlayButtonDisplayed && isOwner) && 
               <div className="play-button">
-                <AppButton onClick={handleStartGame}>Play</AppButton>
+                <AppButton classe={'litle'}  onClick={handleStartGame}>Play</AppButton>
               </div>
             }  
           </div>
@@ -216,8 +221,8 @@ function MultiGame() {
       {(!isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
-            {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
-            {win && <p className="win">You Win!</p>}  {/* Display win message */}
+            {(!win && gameOver) && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {(!gameOver && win) && <p className="win">You Win!</p>}  {/* Display win message */}
             <p className='text'>{username}</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
