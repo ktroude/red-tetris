@@ -82,7 +82,6 @@ module.exports = (io) => {
                     try {
                         io.to(game.opponent.id).emit('restart');
                         io.to(game.owner.id).emit('restart');
-                    console.log(player);
                     if (player.nextPieces.length > 0)
                             io.to(game.opponent.id).emit('nextPiece', { nextPiece: game.opponent.nextPieces[0].shape });
                         io.to(game.owner.id).emit('nextPiece', { nextPiece: game.owner.nextPieces[0].shape });

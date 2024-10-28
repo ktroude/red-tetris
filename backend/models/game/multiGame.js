@@ -98,14 +98,13 @@ class MultiGame {
 
                 // Handle gameover logic
                 if (ownerIsGameOver) {
-                    const winnerPlayer = playerId === this.owner?.id ? this.opponent : this.owner;
-                    const loserPlayer = winnerPlayer.id !== this.owner?.id ? this.owner : this.opponent;
 
                     this.isRunning = false;
                     io.to(this.owner.id).emit('gameOver');
                     io.to(this.opponent.id).emit('win');
                     clearInterval();
                     this.isRunning = false;
+                    new StorageProvider().addMutliGame(this.opponent.name, this.owner.name);
                     return;
                 }
                 if (opponentIsGameOver) {
@@ -113,13 +112,8 @@ class MultiGame {
                     io.to(this.opponent.id).emit('gameOver');
                     io.to(this.owner.id).emit('win');
                     clearInterval();
-
-                    console.log(this.opponent.name);
-                    console.log(this.owner.name);
                     
-
-                    // TODO Implements the score on multi
-                    new StorageProvider().addMutliGame(winnerPlayer.name, loserPlayer.name);
+                    new StorageProvider().addMutliGame(this.owner.name, this.opponent.name);
                     
                     this.isRunning = false;
                     return;
@@ -134,9 +128,6 @@ class MultiGame {
      * to ensure identical gameplay and fair competition.
      */
     distributePieces() {
-
-        console.log("Owner", this.owner);
-        console.log("Opponent", this.opponent);
         
         if (this.owner && this.opponent) {
             this.opponent.grid = this.opponent.createEmptyGrid();
