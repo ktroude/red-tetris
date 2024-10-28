@@ -1,19 +1,19 @@
 import { useContext, useEffect, useReducer } from "react";
 import { UserContext } from "../../Context/UserContext";
 
-const BackgroundMusic = () => {
+const BackgroundMusic = ({ setMusicRef }) => {
   const musicRef = useReducer(null);
-  const { username } = useContext(UserContext);  // Retrieve username from UserContext
+  const { username } = useContext(UserContext);
 
   useEffect(() => {
     if (username) {
-      // Create a new audio element
       musicRef.current = new Audio('/Tetris.mp3');
-      musicRef.current.loop = true; // Loop the music
-      musicRef.current.volume = 0.5; // Set the volume to 50%
+      musicRef.current.loop = true;
+      musicRef.current.volume = 0.5;
       musicRef.current.play();
-      
-      // Clean up function
+
+      setMusicRef(musicRef);
+
       return () => {
         if (musicRef.current) {
           musicRef.current.pause();
@@ -21,10 +21,9 @@ const BackgroundMusic = () => {
         }
       };
     }
-    }, [username]);
-    
-    return null; // nothing to render
+  }, [username, setMusicRef]);
+
+  return null;
 };
 
 export default BackgroundMusic;
-

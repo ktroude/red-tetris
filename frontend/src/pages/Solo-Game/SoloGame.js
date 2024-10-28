@@ -122,21 +122,25 @@ function SoloGame() {
   }, [socket, gameOver]);
 
   return (
-    <div className='solo-game-container'>
-      <GameBoard grid={grid} />
+    <>
+      <div className='solo-game-container'>
+        <GameBoard grid={grid} />
+        <div>
           {nextPiece && (
             <div className="next-piece">
-              <GameBoard grid={nextPiece} />
+              <GameBoard grid={nextPiece} showBorders={false} />
             </div>
           )}
           <h3>Score: {score}</h3>
-      {gameOver && 
+          {gameOver && 
         <>
           <p className="game-over">Game Over</p> 
           <AppButton onClick={() => navigate('/home')}>GO BACK TO HOME PAGE</AppButton>
         </>
       }
-    </div>
+        </div>
+      </div>
+    </>
   );
 }
 

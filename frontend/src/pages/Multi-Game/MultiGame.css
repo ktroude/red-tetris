@@ -1,13 +1,20 @@
 .multi-game-container{
-    height: calc(100vh - 4px);
-    width: calc(100vw - 4px);
+    height: calc(100vh - 105px);
+    width: 100vw;
     background-color: #000;
-    border: 2px solid #ff0000;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 50px;
+    gap: 20px;
+    overflow: hidden;
+}
+
+.text {
+  font-family: 'Press Start 2P', cursive;
+  color: rgb(128, 128, 128);
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .next-piece {
@@ -17,8 +24,9 @@
 }
 
 .win{
+  font-family: 'Press Start 2P', cursive;
     color: rgb(89, 172, 7);
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -31,11 +39,16 @@
 
 
 .game-over {
+    font-family: 'Press Start 2P', cursive;
     color: red;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
 }
 
 .play-button{
-    margin-top: 30px;
+    margin-top: 10px;
+}
+
+.litle{
+    height: 30px;
 }

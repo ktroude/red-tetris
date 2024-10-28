@@ -1,53 +1,73 @@
-/* Main container */
 .app-container {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    height: calc(100vh - 4px);
-    width: calc(100vw - 4px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #000; /* Black background for arcade style */
-    border: 2px solid #ff0000;
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.7); /* Neon glow effect */
-    gap: 20px;
-  }
-  
-  /* Label style */
-  .form-label {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    font-size: 16px;
-    color: #ff4d4d; /* Bright red for labels */
-    margin-bottom: 20px;
-    text-transform: uppercase;
-  }
-  
-  /* Input styling */
-  input {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    margin-bottom: 20px; /* Adds space below input */
-    border-radius: 7px;
-    width: 250px;
-    padding: 10px;
-    border: 2px solid #ff0000; /* Red neon border */
-    background-color: #1a1a1a;
-    color: #fff;
-    font-size: 16px;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); /* Neon glow around input */
-    outline: none;
-    transition: all 0.3s ease;
-  }
-  
-  /* Focus effect for input */
-  input:focus {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    box-shadow: 0 0 15px rgba(255, 0, 0, 1); /* Stronger glow on focus */
-    border-color: #ff4d4d;
-  }
-  
+  font-family: 'Press Start 2P', cursive;
+  height: calc(100vh - 105px);
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+  gap: 20px;
+  animation: fadeIn 1.5s ease-in-out;
+  overflow: hidden;
+}
 
-  p {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    color: #4d4c4c;
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes borderFlicker {
+  0% {
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
   }
+  50% {
+      box-shadow: 0 0 25px rgba(255, 0, 0, 1);
+  }
+  100% {
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+  }
+}
+
+.app-container {
+  animation: borderFlicker 2s infinite;
+}
+
+  
+.form-label {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 16px;
+  color: #ff4d4d;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+@keyframes glow {
+  0% {
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+  }
+  100% {
+      box-shadow: 0 0 20px rgba(255, 0, 0, 1);
+  }
+}
+
+.error-message {
+  font-family: 'Press Start 2P', cursive;
+  color: #ff0000;
+  font-size: 12px;
+  margin-top: 10px;
+  text-align: center;
+  animation: shake 0.8s;
+  z-index: 5;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
   

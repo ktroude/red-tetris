@@ -61,12 +61,32 @@ function MultiGame() {
   }, [apiUrl, dispatch]);
 
   useEffect(() => {
+    blockDropSound.current = new Audio('/bloc.mp3');
+  }, []);
+
+  function playDropSound () {
+    if (blockDropSound.current) {
+      blockDropSound.current.play();
+    }
+  };
+
+  // Helper function to create an empty grid (20x10 matrix)
+  function createEmptyGrid() {
+    return Array.from({ length: 20 }, () => Array(10).fill(0));
+  }
+
+  useEffect(() => {
     if (socket && roomName) {
       // Join the multiplayer game room
       socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomName });
 
       socket.on('init', (data) => {
         setGrid(data.grid);  // Initialize the player's grid
+      });
+
+      socket.on('restart', () => {
+        setGameOver(false);  // Reset game over state
+        setWin(false);  // Reset win state
       });
 
       socket.on('isOwner', () => {
@@ -122,6 +142,7 @@ function MultiGame() {
       // Handle opponent-related events
       if (isOwner) {
         socket.on('opponentJoined', (data) => {
+          console.log("opponentJoined = " + data);
           setOpponentName(data);  // Set the opponent's name when they join
         });
       } else {
@@ -183,23 +204,27 @@ function MultiGame() {
 
   return (
     <>
-      {isRoomFull && <p>This room is full, try another one</p>}  {/* Show message if the room is full */}
-      
+      {isRoomFull && 
+        <div className="multi-game-container">
+          <p className='error-message'>This room is full, try another one</p>
+        </div>
+      }
+
       {(isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
-          {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
-            {win && <p className="win">You Win!</p>}  {/* Display win message */}
-            <p>{username}'s Game</p>
+          {(!win && gameOver) && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {(!gameOver && win) && <p className="win">You Win!</p>}  {/* Display win message */}
+            <p className='text'>{username}'s Game</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
-            {nextPiece && (
+            {nextPiece && !isPlayButtonDisplayed && (
               <div className="next-piece">
-                <GameBoard grid={nextPiece} />  {/* Render the next piece */}
+                <GameBoard grid={nextPiece} showBorders={false} />  {/* Render the next piece */}
               </div>
             )}
-            {isPlayButtonDisplayed && 
+            {(isPlayButtonDisplayed && isOwner) && 
               <div className="play-button">
-                <AppButton onClick={handleStartGame}>Play</AppButton>
+                <AppButton classe={'litle'}  onClick={handleStartGame}>Play</AppButton>
                 { gameOver && 
                   <AppButton onClick={() => navigate('/home')}>GO BACK</AppButton>
                 }
@@ -208,7 +233,7 @@ function MultiGame() {
             }  
           </div>
           <div className="opponent-section">
-            <p>{opponentName || "Waiting for opponent..."}</p>  {/* Display opponent's name or waiting message */}
+            <p className='text'>{opponentName || "Waiting for opponent..."}</p>  {/* Display opponent's name or waiting message */}
             {opponentName && <GameBoard grid={opponentGrid} />}
           </div>
         </div>
@@ -218,13 +243,13 @@ function MultiGame() {
       {(!isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
-            {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
-            {win && <p className="win">You Win!</p>}  {/* Display win message */}
-            <p>{username}</p>
+            {(!win && gameOver) && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {(!gameOver && win) && <p className="win">You Win!</p>}  {/* Display win message */}
+            <p className='text'>{username}</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
               <div className="next-piece">
-                <GameBoard grid={nextPiece} />  {/* Render the next piece */}
+                <GameBoard grid={nextPiece} showBorders={false} />  {/* Render the next piece */}
               </div>
             )}
             {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
@@ -236,7 +261,7 @@ function MultiGame() {
           }
 
           <div className="opponent-section">
-            <p>{opponentName}'s Game</p>  {/* Display opponent's name */}
+            <p className='text'>{opponentName}'s Game</p>  {/* Display opponent's name */}
             <GameBoard grid={opponentGrid} />  {/* Render the opponent's game board */}
           </div>
         </div>

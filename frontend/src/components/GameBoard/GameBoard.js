@@ -1,7 +1,7 @@
 import React from 'react';
 import './GameBoard.css';
 
-const GameBoard = ({ grid }) => {
+const GameBoard = ({ grid, showBorders = true }) => {
   return (
     <div style={{ minHeight: 60, display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 30px)` }}>
       {grid.flat().map((cell, index) => {
@@ -9,7 +9,7 @@ const GameBoard = ({ grid }) => {
 
         switch (cell) {
           case 0:
-            className = 'empty-cell';
+              className = 'empty-cell';
             break;
           case 1:
             className += ' cyan';
@@ -36,10 +36,19 @@ const GameBoard = ({ grid }) => {
             className += ' white';
             break;
           default:
-            className = 'empty-cell'; // Default case if something unexpected happens
+            className = 'empty-cell';
             break;
         }
 
+        if (!showBorders) {
+          if (className === 'cell empty-cell') {
+            className = 'no-display';
+          }
+          className += ' no-border';
+        }
+        else {
+          className += ' border'
+        }
         return <div key={index} className={className} />;
       })}
     </div>

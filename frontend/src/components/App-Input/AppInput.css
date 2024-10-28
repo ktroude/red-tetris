@@ -7,34 +7,33 @@
     gap: 20px;
 }
 
-/* Label style */
 .form-label {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
+    z-index: 2;
+    font-family: 'Press Start 2P', cursive;
     font-size: 16px;
-    color: #ff4d4d; /* Bright red for labels */
+    color: #ff4d4d;
     margin-bottom: 20px;
     text-transform: uppercase;
 }
 
-/* Input styling */
-input {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    margin-bottom: 20px; /* Adds space below input */
+.AppInput {
+    z-index: 2;
+    font-family: 'Press Start 2P', cursive;
+    margin-bottom: 20px;
     border-radius: 7px;
     width: 310px;
     padding: 10px;
-    border: 2px solid #ff0000; /* Red neon border */
+    border: 2px solid #ff0000;
     background-color: #1a1a1a;
     color: #fff;
     font-size: 16px;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); /* Neon glow around input */
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
     outline: none;
     transition: all 0.3s ease;
 }
   
-/* Focus effect for input */
-input:focus {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    box-shadow: 0 0 15px rgba(255, 0, 0, 1); /* Stronger glow on focus */
+.AppInput:focus {
+    font-family: 'Press Start 2P', cursive;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 1);
     border-color: #ff4d4d;
 }

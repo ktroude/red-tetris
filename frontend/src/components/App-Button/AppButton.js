@@ -1,9 +1,10 @@
 import './AppButton.css'
 
 
-function AppButton({ onClick, children }) {
+function AppButton({ onClick, classe, children }) {
+    classe += ' AppButton';
     return (
-        <button className='AppButton' onClick={onClick}>
+        <button className={classe} onClick={onClick}>
             {children}
         </button>
     );

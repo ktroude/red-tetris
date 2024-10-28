@@ -1,24 +1,33 @@
-/* Button styling */
+/* Bouton amélioré */
 .AppButton {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
+    z-index: 2;
+    font-family: 'Press Start 2P', cursive;
     width: 200px;
     height: 50px;
     border-radius: 7px;
-    background-color: #ff4d4d; /* Bright red background */
+    background-color: #ff4d4d;
     color: #fff;
     border: none;
     text-transform: uppercase;
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7), inset 0 0 5px rgba(255, 255, 255, 0.5); /* Glow effect */
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.7), inset 0 0 5px rgba(255, 255, 255, 0.5);
     position: relative;
     z-index: 1;
+    animation: pulse 3s infinite alternate;
 }
-  
-/* Neon glow effect around button */
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
 .AppButton::before {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
     content: '';
     position: absolute;
     top: -5px;
@@ -32,25 +41,14 @@
     filter: blur(10px);
     opacity: 0.7;
 }
-  
-/* Hover effect for button */
+
 .AppButton:hover {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    background-color: #fff;
+    background-color: #ffffff;
     color: #fff;
-    box-shadow: 0 0 25px rgba(255, 0, 0, 1); /* Stronger glow on hover */
+    box-shadow: 0 0 30px rgba(255, 0, 0, 1);
 }
-  
-/* Active/click effect for button */
+
 .AppButton:active {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    transform: scale(0.95); /* Slight shrink on click */
+    transform: scale(0.9);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 1);
 }
-  
-/* Increased glow on button hover */
-.AppButton:hover::before {
-    font-family: 'Press Start 2P', cursive; /* Retro game font */
-    filter: blur(20px);
-    opacity: 1;
-}
-  

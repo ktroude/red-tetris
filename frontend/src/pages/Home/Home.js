@@ -4,6 +4,7 @@ import AppInput from '../../components/App-Input/AppInput';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../Context/UserContext';
 import './Home.css';
+import TetrisBackground from '../../components/Tetris-Background.js/TetrisBackground';
 
 function Home() {
     const [roomName, setRoomName] = useState('');
@@ -44,32 +45,46 @@ function Home() {
     }
 
     return (
-        <div className='home-container'>
-            {!isMultiChoosen && (
-                <>
-                    <div className='button-container'>
-                        <AppButton onClick={handleClick}>Start Multi</AppButton>
-                        <AppButton onClick={() => navigateToSolo()}>Start Solo</AppButton>
-                        <AppButton onClick={() => navigate(`/history/${username}`)}>History</AppButton>
+        <>
+            <TetrisBackground xPercentage={3} />
+            <TetrisBackground xPercentage={11} />
+            <TetrisBackground xPercentage={19} />
+            <TetrisBackground xPercentage={27} />
+            <TetrisBackground xPercentage={35} />
+            <TetrisBackground xPercentage={43} />
+            <TetrisBackground xPercentage={51} />
+            <TetrisBackground xPercentage={59} />
+            <TetrisBackground xPercentage={67} />
+            <TetrisBackground xPercentage={75} />
+            <TetrisBackground xPercentage={83} />
+            <TetrisBackground xPercentage={91} />
+            <div className='home-container'>
+                {!isMultiChoosen && (
+                    <>
+                        <div className='button-container'>
+                            <AppButton onClick={handleClick}>Start Multi</AppButton>
+                            <AppButton onClick={() => navigateToSolo()}>Start Solo</AppButton>
+                            <AppButton onClick={() => navigate(`/history/${username}`)}>History</AppButton>
                     </div>
-                </>
-            )}
-            {isMultiChoosen && (
-                <>
-                    <AppInput
-                        label="Join a room"
-                        placeholder={"Room name to join"}
-                        onChange={(event) => handleInputChange(setRoomName, event)}
-                        onKeyDown={handleKeyDown}
-                    />
-                    <div className="display-flex-row">
+                    </>
+                )}
+                {isMultiChoosen && (
+                    <>
+                        <AppInput
+                            label="Join a room"
+                            placeholder={"Room name to join"}
+                            onChange={(event) => handleInputChange(setRoomName, event)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <div className="display-flex-row">
                         <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
-                        <AppButton onClick={() => setIsMultiChoosen(false)}>BACK</AppButton>
+                            <AppButton onClick={() => setIsMultiChoosen(false)}>BACK</AppButton>
                     </div>
                     {isError && <p className="error-message">Error: Username must be 2-15 characters long and contain only alphanumeric characters.</p>}
-                </>
-            )}
-        </div>
+                    </>
+                )}
+            </div>
+        </>
     );
 }
 

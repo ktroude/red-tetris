@@ -1,0 +1,33 @@
+.falling-piece {
+  z-index: 0;
+  position: absolute;
+  top: -50px;
+  left: calc(50% - 60px);
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    top: 125px;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+.falling-piece:nth-child(2n) {
+  animation-duration: 6s;
+}
+
+.falling-piece:nth-child(3n) {
+  animation-duration: 4s;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(90deg);
+  }
+}

@@ -19,6 +19,7 @@ class MultiGame {
         this.opponent = null; // Second player in the room
         this.pieceManager = new PieceManager(); // Manages the generation and distribution of Tetris pieces
         this.isRunning = false; // Flag to indicate if the game is actively running
+        this.gameLoopInterval = null; // Interval for the game loop
     }
 
     /**
@@ -61,68 +62,57 @@ class MultiGame {
      * @param {Object} io - The socket.io instance used for real-time communication.
      * @param {Player} player - The player requesting to start the game loop.
      */
-    startGameLoop(io, playerId) {
-        this.isRunning = true;
-        let isGameOver = false;
-        let linesCleared = 0;
+    startGameLoop(io) {
 
-        setInterval(() => {
-            if (!this.isRunning) return;
+        this.isRunning = true;
+
+        let ownerIsGameOver = false;
+        let opponentIsGameOver = false;
+        let ownerLinesCleared = 0;
+        let opponentLinesCleared = 0;
+
+        this.gameLoopInterval = setInterval(() => {
             if (this.isRunning) {
                 // Stop the game if either player disconnects
-                if (this.owner?.id === undefined || this.opponent?.id === undefined) {
-                    this.isRunning = false;
-                    return;
-                }
+                let ownerResult = this.owner.movePiece('down');
+                let opponentResult = this.opponent.movePiece('down');
 
-                // Handle game logic for the owner
-                if (playerId === this.owner?.id) {
-                    let result = this.owner.movePiece('down');
-                    isGameOver = result.gameover;
-                    linesCleared = result.linesCleared;
+                    ownerIsGameOver = ownerResult.gameover;
+                    opponentIsGameOver = opponentResult.gameover;
+                    ownerLinesCleared = ownerResult.linesCleared;
+                    opponentLinesCleared = opponentResult.linesCleared;
 
-                    // If multiple lines cleared, freeze lines in opponent's grid
-                    if (linesCleared > 1) {
-                        this.opponent.grid = this.freezeLinesGrid(linesCleared - 1, this.opponent);
+                    if (ownerLinesCleared > 1) {
+                        this.freezeLinesGrid(ownerLinesCleared - 1, this.opponent.grid);
                         io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
                     }
-
-                    io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
-                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.spectraGrid });
-                }
-
-                // Handle game logic for the opponent
-                if (playerId === this.opponent?.id) {
-                    let result = this.opponent.movePiece('down');
-                    isGameOver = result.gameover;
-                    linesCleared = result.linesCleared;
-
-                    // If multiple lines cleared, freeze lines in the owner's grid
-                    if (linesCleared > 1) {
-                        this.owner.grid = this.freezeLinesGrid(linesCleared - 1, this.owner);
+                    if (opponentLinesCleared > 1) {
+                        this.freezeLinesGrid(opponentLinesCleared - 1, this.owner.grid);
                         io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
                     }
 
+                    io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
                     io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
                     io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.spectraGrid });
-                }
+                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.spectraGrid });
 
                 // Handle gameover logic
-                if (isGameOver) {
+                if (ownerIsGameOver) {
                     const winnerPlayer = playerId === this.owner?.id ? this.opponent : this.owner;
                     const loserPlayer = winnerPlayer.id !== this.owner?.id ? this.owner : this.opponent;
 
-                    if (playerId === this.owner?.id) {
-                        this.isRunning = false;
-                        io.to(this.owner.id).emit('gameOver');
-                        io.to(this.opponent.id).emit('win');
-                    }
-                    if (playerId === this.opponent?.id) {
-                        this.isRunning = false;
-                        io.to(this.opponent.id).emit('gameOver');
-                        io.to(this.owner.id).emit('win');
-                        return;
-                    }
+                    this.isRunning = false;
+                    io.to(this.owner.id).emit('gameOver');
+                    io.to(this.opponent.id).emit('win');
+                    clearInterval();
+                    this.isRunning = false;
+                    return;
+                }
+                if (opponentIsGameOver) {
+                    this.isRunning = false;
+                    io.to(this.opponent.id).emit('gameOver');
+                    io.to(this.owner.id).emit('win');
+                    clearInterval();
 
                     console.log(this.opponent.name);
                     console.log(this.owner.name);
@@ -132,6 +122,7 @@ class MultiGame {
                     new StorageProvider().addMutliGame(winnerPlayer.name, loserPlayer.name);
                     
                     this.isRunning = false;
+                    return;
                 }
             }
         }, 1000); // Runs the game loop every second, no speed decrease in multiplayer mode
@@ -196,6 +187,13 @@ class MultiGame {
             }
         }
         return grid; // Return the updated grid
+    }
+
+    clearInterval() {
+        clearInterval(this.gameLoopInterval);  // Stop the loop
+        clearInterval(this.gameLoopInterval);  // Stop the loop
+        this.gameLoopInterval = null;
+        console.log('Game loop stopped');
     }
 }
 
