@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
@@ -20,23 +20,28 @@ function MultiGame() {
   const [opponentName, setOpponentName] = useState(null);  // State to store the opponent's name
   const [nextPiece, setNextPiece] = useState(null);  // State to track the next piece to be played
   const { roomName } = useParams();  // Retrieve room name from the URL parameters
-  const [roomname, setRoomname] = useState("");  // State to store the room name
   const [isOwner, setIsOwner] = useState(false);  // State to track if the player is the room owner
   const [isRoomFull, setIsRoomFull] = useState(false);  // State to track if the room is full
   const apiUrl = process.env.REACT_APP_API_URL;  // Get the API URL from environment variables
+  const [isPlayButtonDisplayed, setIsPlayButtonDisplayed] = useState(true);  // State to display the play button
+  const blockDropSound = useRef(null);  // Ref to store the block drop sound
+
+
+  useEffect(() => {
+    blockDropSound.current = new Audio('/bloc.mp3');
+  }, []);
+
+  function playDropSound () {
+    if (blockDropSound.current) {
+      blockDropSound.current.play();
+    }
+  };
   const navigate = useNavigate();
 
   // Helper function to create an empty grid (20x10 matrix)
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
   }
-
-  // Set the room name based on the URL parameter
-  useEffect(() => {
-    if (roomName) {
-      setRoomname(roomName);
-    }
-  }, [roomName]);
 
   // Socket setup and cleanup
   useEffect(() => {
@@ -56,14 +61,9 @@ function MultiGame() {
   }, [apiUrl, dispatch]);
 
   useEffect(() => {
-    if (socket) {
+    if (socket && roomName) {
       // Join the multiplayer game room
-      socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomname });
-
-      // Handle game events and socket responses
-      socket.on('GameReady', () => {
-        socket.emit('gameStart');
-      });
+      socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomName });
 
       socket.on('init', (data) => {
         setGrid(data.grid);  // Initialize the player's grid
@@ -82,32 +82,35 @@ function MultiGame() {
       });
 
       socket.on('opponentUpdateGrid', (data) => {
-        setOpponentGrid(data.grid);  // Update the opponent's grid
+        console.log("data = " + data);
+        if (data.grid) {
+          setOpponentGrid(data.grid);  // Update the opponent's grid
+        }
       });
 
       socket.on('nextPiece', (data) => {
+        console.log("nextPiece from ", username, "  "  , data);
         setNextPiece(data.nextPiece);  // Update the next piece
       });
 
       socket.on('gameOver', () => {
+        setIsPlayButtonDisplayed(true);
         setGameOver(true);  // Handle game over event
       });
 
       socket.on('win', () => {
+        setIsPlayButtonDisplayed(true);
         setWin(true);  // Handle win event
       });
 
       // Cleanup event listeners on component unmount
       return () => {
         socket.off('init');
-        socket.off('GameReady');
-        socket.off('updateGrid');
         socket.off('isOwner');
         socket.off('roomFull');
+        socket.off('updateGrid');
         socket.off('opponentUpdateGrid');
         socket.off('nextPiece');
-        socket.off('opponentJoined');
-        socket.off('ownerIsHere');
         socket.off('gameOver');
         socket.off('win');
       };
@@ -132,7 +135,10 @@ function MultiGame() {
   // Handle player movement and key presses
   useEffect(() => {
     const handleKeyPress = (e) => {
-      if (!socket || win || gameOver) return;
+      if (!socket || win || gameOver)
+        {
+          return;
+        }
       let direction;
       // Map key presses to movement directions
       switch (e.key) {
@@ -156,6 +162,7 @@ function MultiGame() {
       }
       // Emit the movement event to the server
       socket.emit('movePiece', direction);
+      playDropSound();
     };
 
     document.addEventListener('keydown', handleKeyPress);  // Add keydown event listener
@@ -164,6 +171,16 @@ function MultiGame() {
     };
   }, [socket, gameOver, win]);
 
+
+  function handleStartGame() {
+    if (socket && opponentName) {
+      socket.emit('launchGame');
+      setIsPlayButtonDisplayed(false);  // Hide the play button
+      setGameOver(false);  // Reset game over state
+      setWin(false);  // Reset win state
+    }
+  }
+
   return (
     <>
       {isRoomFull && <p>This room is full, try another one</p>}  {/* Show message if the room is full */}
@@ -171,6 +188,8 @@ function MultiGame() {
       {(isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
+          {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {win && <p className="win">You Win!</p>}  {/* Display win message */}
             <p>{username}'s Game</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (
@@ -178,11 +197,19 @@ function MultiGame() {
                 <GameBoard grid={nextPiece} />  {/* Render the next piece */}
               </div>
             )}
-            {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {isPlayButtonDisplayed && 
+              <div className="play-button">
+                <AppButton onClick={handleStartGame}>Play</AppButton>
+                { gameOver && 
+                  <AppButton onClick={() => navigate('/home')}>GO BACK</AppButton>
+                }
+
+              </div>
+            }  
           </div>
           <div className="opponent-section">
             <p>{opponentName || "Waiting for opponent..."}</p>  {/* Display opponent's name or waiting message */}
-            <GameBoard grid={opponentGrid} />  {/* Render the opponent's game board */}
+            {opponentName && <GameBoard grid={opponentGrid} />}
           </div>
         </div>
       )}
@@ -191,6 +218,8 @@ function MultiGame() {
       {(!isOwner && !isRoomFull) && (
         <div className="multi-game-container">
           <div className="player-section">
+            {gameOver && <p className="game-over">Game Over</p>}  {/* Display game over message */}
+            {win && <p className="win">You Win!</p>}  {/* Display win message */}
             <p>{username}</p>
             <GameBoard grid={grid} />  {/* Render the player's game board */}
             {nextPiece && (

@@ -59,6 +59,54 @@
       "score": 7490,
       "username": "jbetini",
       "gameType": "SOLO"
+    },
+    {
+      "id": 1729685668776,
+      "winnerUsername": "22",
+      "loserUsername": "11",
+      "gameType": "MULTI"
+    },
+    {
+      "id": 1729685722769,
+      "winnerUsername": "22",
+      "loserUsername": "11",
+      "gameType": "MULTI"
+    },
+    {
+      "id": 1730121369245,
+      "score": 12490,
+      "username": "11",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1730121506582,
+      "score": 120,
+      "username": "11",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1730121534454,
+      "score": 110,
+      "username": "11",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1730121551590,
+      "score": 110,
+      "username": "11",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1730121721620,
+      "score": 110,
+      "username": "11",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1730121829234,
+      "score": 110,
+      "username": "11",
+      "gameType": "SOLO"
     }
   ]
 }

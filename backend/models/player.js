@@ -18,6 +18,7 @@ class Player {
         this.id = id;   // player's socket id
         this.name = name; // player's username
         this.grid = this.createEmptyGrid(); // player's Tetris grid
+        this.spectraGrid = this.createEmptyGrid(); // grid used to display the opponent's grid in multiplayer mode
         this.currentPiece = null; // the piece currently being controlled by the player
         this.nextPieces = []; // queue of upcoming pieces
         this.score = 0; // scoring system
@@ -68,6 +69,8 @@ class Player {
      */
     movePiece(direction) {
         if (!this.currentPiece) {
+            this.spectraGrid = this.grid.map(row => [...row]);
+            // this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);
             return { gameover: false, linesCleared: 0 };
         }
 
@@ -103,6 +106,8 @@ class Player {
                 piece.y -= 1;  // Revert to the last valid position
                 this.placePiece(piece);
                 let linesCleared = this.clearFullLines();
+                this.spectraGrid = this.grid.map(row => [...row]);
+                this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);
                 this.generateNewPiece();
                 return { gameover: this.checkGameOver(), linesCleared: linesCleared };
         }
@@ -116,10 +121,14 @@ class Player {
             if (direction === 'down') {
                 this.placePiece(piece);
                 let linesCleared = this.clearFullLines();
+                this.spectraGrid = this.grid.map(row => [...row]);
+                this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);        
                 this.generateNewPiece();
                 return { gameover: this.checkGameOver(), linesCleared: linesCleared };
             }
         }
+        this.spectraGrid = this.grid.map(row => [...row]);
+        this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);
         return { gameover: false, linesCleared: 0 };
     }
 
@@ -182,6 +191,30 @@ class Player {
                 }
             }
         }
+    }
+
+    removeFloatingBlock(grid, piece) {
+        const matrix = piece.getMatrix(); // Obtenir la matrice du bloc (sa forme actuelle)
+        const startX = piece.x; // Position X de la pièce dans la grille
+        const startY = piece.y; // Position Y de la pièce dans la grille
+    
+        return grid.map((row, r) =>
+            row.map((cell, c) => {
+                // Vérifier si la cellule appartient à la pièce
+                const isPieceCell = 
+                    r >= startY && r < startY + matrix.length && // Vérifier si Y est dans la plage de la pièce
+                    c >= startX && c < startX + matrix[0].length && // Vérifier si X est dans la plage de la pièce
+                    matrix[r - startY][c - startX] !== 0; // Vérifier si la matrice contient un bloc ici
+    
+                // Si la cellule appartient à la pièce, la passer à 0
+                if (isPieceCell) {
+                    return 0;
+                }
+    
+                // Sinon, la passer à 9 si elle n'est pas déjà vide
+                return cell === 0 ? 0 : 9;
+            })
+        );
     }
 
     /**

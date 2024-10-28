@@ -18,6 +18,8 @@
 
 .win{
     color: rgb(89, 172, 7);
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .player-section, .opponent-section {
@@ -32,4 +34,8 @@
     color: red;
     font-size: 24px;
     font-weight: bold;
+}
+
+.play-button{
+    margin-top: 30px;
 }

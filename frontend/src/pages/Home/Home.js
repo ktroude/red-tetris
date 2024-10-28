@@ -10,6 +10,7 @@ function Home() {
     const [isMultiChoosen, setIsMultiChoosen] = useState(false);
     const navigate = useNavigate();
     const { username } = useContext(UserContext);
+    const [isError, setIsError] = useState(false);
 
     const handleInputChange = (setterFunction, event) => {
         setterFunction(event.target.value);
@@ -25,15 +26,20 @@ function Home() {
     }
 
     function navigateToMulti() {
-        if (roomName.length > 0 && checkUsername(roomName)) {
+        if (!checkUsername(roomName)) {
+            setIsError(true);
+        } else {
             navigate(`/multi/${roomName}/${username}`);
         }
     }
 
     function navigateToSolo() {
-        if (username.length > 0 && checkUsername(username)) {
-            console.log("NAV SOLO ", username);
             navigate(`/solo/${username}`);
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            navigateToMulti();
         }
     }
 
@@ -44,6 +50,7 @@ function Home() {
                     <div className='button-container'>
                         <AppButton onClick={handleClick}>Start Multi</AppButton>
                         <AppButton onClick={() => navigateToSolo()}>Start Solo</AppButton>
+                        <AppButton onClick={() => navigate(`/history/${username}`)}>History</AppButton>
                     </div>
                 </>
             )}
@@ -53,8 +60,13 @@ function Home() {
                         label="Join a room"
                         placeholder={"Room name to join"}
                         onChange={(event) => handleInputChange(setRoomName, event)}
+                        onKeyDown={handleKeyDown}
                     />
-                    <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
+                    <div className="display-flex-row">
+                        <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
+                        <AppButton onClick={() => setIsMultiChoosen(false)}>BACK</AppButton>
+                    </div>
+                    {isError && <p className="error-message">Error: Username must be 2-15 characters long and contain only alphanumeric characters.</p>}
                 </>
             )}
         </div>

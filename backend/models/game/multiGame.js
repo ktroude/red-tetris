@@ -61,12 +61,13 @@ class MultiGame {
      * @param {Object} io - The socket.io instance used for real-time communication.
      * @param {Player} player - The player requesting to start the game loop.
      */
-    startGameLoop(io, player) {
+    startGameLoop(io, playerId) {
         this.isRunning = true;
         let isGameOver = false;
         let linesCleared = 0;
 
         setInterval(() => {
+            if (!this.isRunning) return;
             if (this.isRunning) {
                 // Stop the game if either player disconnects
                 if (this.owner?.id === undefined || this.opponent?.id === undefined) {
@@ -75,7 +76,7 @@ class MultiGame {
                 }
 
                 // Handle game logic for the owner
-                if (player && player.id && player.id === this.owner?.id) {
+                if (playerId === this.owner?.id) {
                     let result = this.owner.movePiece('down');
                     isGameOver = result.gameover;
                     linesCleared = result.linesCleared;
@@ -87,11 +88,11 @@ class MultiGame {
                     }
 
                     io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
-                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.grid });
+                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.spectraGrid });
                 }
 
                 // Handle game logic for the opponent
-                if (player && player.id && player.id === this.opponent?.id) {
+                if (playerId === this.opponent?.id) {
                     let result = this.opponent.movePiece('down');
                     isGameOver = result.gameover;
                     linesCleared = result.linesCleared;
@@ -103,20 +104,21 @@ class MultiGame {
                     }
 
                     io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
-                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.grid });
+                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.spectraGrid });
                 }
 
                 // Handle gameover logic
                 if (isGameOver) {
-
-                    const winnerPlayer = player.id === this.owner?.id ? this.opponent : this.owner;
+                    const winnerPlayer = playerId === this.owner?.id ? this.opponent : this.owner;
                     const loserPlayer = winnerPlayer.id !== this.owner?.id ? this.owner : this.opponent;
 
-                    if (player.id === this.owner?.id) {
+                    if (playerId === this.owner?.id) {
+                        this.isRunning = false;
                         io.to(this.owner.id).emit('gameOver');
                         io.to(this.opponent.id).emit('win');
                     }
-                    if (player.id === this.opponent?.id) {
+                    if (playerId === this.opponent?.id) {
+                        this.isRunning = false;
                         io.to(this.opponent.id).emit('gameOver');
                         io.to(this.owner.id).emit('win');
                         return;
@@ -146,6 +148,10 @@ class MultiGame {
         console.log("Opponent", this.opponent);
         
         if (this.owner && this.opponent) {
+            this.opponent.grid = this.opponent.createEmptyGrid();
+            this.owner.grid = this.opponent.createEmptyGrid();
+            this.owner.nextPieces = [];
+            this.opponent.nextPieces = [];
             // Generate and assign pieces for both players
             for (let i = 0; i < 20000; i++) {
                 let piece = this.pieceManager.getNextPiece();

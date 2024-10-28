@@ -1,36 +1,55 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import GameBoard from '../../components/GameBoard/GameBoard';
 import { setSocket, disconnectSocket } from '../../redux/socketSlice'; // Actions Redux
 import './SoloGame.css';
 import { UserContext } from '../../Context/UserContext';
+import AppButton from '../../components/App-Button/AppButton';
+import { useNavigate } from 'react-router-dom';
 
 function SoloGame() {
   const dispatch = useDispatch();
   const { username } = useContext(UserContext);
-  const socket = useSelector((state) => state.socket.socketInstance); // Récupère le socket du store
+  const socket = useSelector((state) => state.socket.socketInstance);
   const [grid, setGrid] = useState(createEmptyGrid());
   const [gameOver, setGameOver] = useState(false);
   const [nextPiece, setNextPiece] = useState(null);
   const [score, setScore] = useState(0);
   const apiUrl = process.env.REACT_APP_API_URL;
+  const blockDropSound = useRef(null);
+  const navigate = useNavigate();
 
   function createEmptyGrid() {
     return Array.from({ length: 20 }, () => Array(10).fill(0));
   }
 
   useEffect(() => {
+    blockDropSound.current = new Audio('/bloc.mp3');
+  }, []);
+
+  function playDropSound() {
+    if (blockDropSound.current) {
+      // Stop the previous sound
+      blockDropSound.current.pause();
+      blockDropSound.current.currentTime = 0; 
+  
+      // Play the new sound
+      blockDropSound.current.play();
+    }
+  }
+
+  useEffect(() => {
     if (socket === null) {
       const newSocket = io(apiUrl);
-      dispatch(setSocket(newSocket));  // Stocker le socket dans Redux
+      dispatch(setSocket(newSocket));  // Store the socket instance in Redux
 
       return () => {
         try {
           newSocket.disconnect();
-          dispatch(disconnectSocket()); // Déconnecter et réinitialiser le socket dans Redux
+          dispatch(disconnectSocket()); // Disconnect the socket instance in Redux
         } catch (e) {
-          console.error('Error disconnecting socket:', e);
+          console.log('Error disconnecting socket:', e);
         }
       };
     }
@@ -93,6 +112,7 @@ function SoloGame() {
           return;
       }
       socket.emit('movePieceSolo', direction);
+      playDropSound();
     };
 
     document.addEventListener('keydown', handleKeyPress);
@@ -110,7 +130,12 @@ function SoloGame() {
             </div>
           )}
           <h3>Score: {score}</h3>
-      {gameOver && <p className="game-over">Game Over</p>}
+      {gameOver && 
+        <>
+          <p className="game-over">Game Over</p> 
+          <AppButton onClick={() => navigate('/home')}>GO BACK TO HOME PAGE</AppButton>
+        </>
+      }
     </div>
   );
 }

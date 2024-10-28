@@ -3,37 +3,37 @@ import './GameBoard.css';
 
 const GameBoard = ({ grid }) => {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 30px)` }}>
+    <div style={{ minHeight: 60, display: 'grid', gridTemplateColumns: `repeat(${grid[0].length}, 30px)` }}>
       {grid.flat().map((cell, index) => {
-        let className;
+        let className = 'cell';
 
         switch (cell) {
           case 0:
             className = 'empty-cell';
             break;
           case 1:
-            className = 'cyan';
+            className += ' cyan';
             break;
           case 2:
-            className = 'blue';
+            className += ' blue';
             break;
           case 3:
-            className = 'orange';
+            className += ' orange';
             break;
           case 4:
-            className = 'yellow';
+            className += ' yellow';
             break;
           case 5:
-            className = 'green';
+            className += ' green';
             break;
           case 6:
-            className = 'purple';
+            className += ' purple';
             break;
           case 7:
-            className = 'red';
+            className += ' red';
             break;
           case 9:
-            className = 'white';
+            className += ' white';
             break;
           default:
             className = 'empty-cell'; // Default case if something unexpected happens

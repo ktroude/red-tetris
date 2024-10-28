@@ -73,26 +73,20 @@ module.exports = (io) => {
             socket.join(requestedRoom);
 
             // Notify both players when the game is ready
-            if (game.owner !== null && game.opponent !== null) {
-                io.to(game.opponent.id).emit('GameReady', game.opponent.nextPieces[0]);
-                io.to(game.owner.id).emit('GameReady', game.owner.nextPieces[0]);
-            }
-
-            /**
-             * Event triggered when the game starts.
-             * This event distributes pieces to players and starts the game loop.
-             */
-            socket.on('gameStart', () => {
-                console.log('Game started');
-                game.distributePieces();
-                
-                game.startGameLoop(io, player);
-                try {
+            socket.on('launchGame', () => {
+                if (game.owner !== null && game.opponent !== null) {
+                    game.distributePieces();
+                    
+                game.startGameLoop(io, game.owner.id);
+                    game.startGameLoop(io, game.opponent.id);
+                    try {
                     console.log(player);
                     if (player.nextPieces.length > 0)
-                        socket.emit('nextPiece', { nextPiece: player.nextPieces[0].shape });
+                            io.to(game.opponent.id).emit('nextPiece', { nextPiece: game.opponent.nextPieces[0].shape });
+                        io.to(game.owner.id).emit('nextPiece', { nextPiece: game.owner.nextPieces[0].shape });
                 } catch (e) {
-                    console.error('Error sending next piece:', e);
+                        console.error('Error sending next piece:', e);
+                    }
                 }
             });
 
@@ -128,8 +122,7 @@ module.exports = (io) => {
                             game.opponent.grid = game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
                             io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                         }
-
-                        io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.grid });
+                        io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
 
@@ -139,7 +132,7 @@ module.exports = (io) => {
                             io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                         }
 
-                        io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.grid });
+                        io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectraGrid });
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
 
@@ -149,14 +142,15 @@ module.exports = (io) => {
 
                     // Handle game over and win conditions
                     if (isGameOver && player.id === game.owner.id) {
+                        game.isRunning = false;
                         io.to(game.owner.id).emit('gameOver', { message: 'Game Over :(' });
                         io.to(game.opponent.id).emit('win', { message: 'You win!' });
                     } else if (isGameOver && player.id === game.opponent.id) {
+                        game.isRunning = false;
                         io.to(game.opponent.id).emit('gameOver', { message: 'Game Over :(' });
                         io.to(game.owner.id).emit('win', { message: 'You win!' });
                     }
-                }
-            });
+            }});
 
             /**
              * Event triggered when a client disconnects from the server.
@@ -180,6 +174,6 @@ module.exports = (io) => {
                 }
                 console.log(`Client disconnected: ${socket.id}`);
             });
-        });
     });
-}
+});
+};

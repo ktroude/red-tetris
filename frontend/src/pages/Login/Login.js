@@ -16,12 +16,17 @@ function Login() {
     };
 
     function handleClick() {
-        console.log("Username entered: ", inputValue);
         if (!checkUserName(inputValue)) {
             setIsError(true);
         } else {
             setUsername(inputValue);
             navigate(`/home`);
+        }
+    }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Enter') {
+            handleClick();
         }
     }
 
@@ -35,11 +40,12 @@ function Login() {
             <AppInput
                 label={"Your username"}
                 placeholder="Username"
+                value={inputValue}
+                onKeyDown={handleKeyDown}
                 onChange={handleInputChange}
             />
             <AppButton onClick={handleClick}>START</AppButton>
-
-            {isError && <p className="error-message">Error: Username must be 2-15 characters long and contain only alphanumeric characters.</p>}
+            {isError && <p className="error-message">Error: Roomname must be 2-15 characters long and contain only alphanumeric characters.</p>}
         </div>
     );
 }

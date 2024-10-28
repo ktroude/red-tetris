@@ -1,0 +1,30 @@
+.scrollable { 
+    overflow-y: auto; 
+}
+
+.history-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.home-container-scrollable::-webkit-scrollbar {
+    width: 8px; /* Largeur de la scrollbar verticale */
+    height: 8px; /* Hauteur de la scrollbar horizontale */
+}
+
+.home-container-scrollable::-webkit-scrollbar-thumb {
+    background-color: #ff0000; /* Couleur de la barre de défilement */
+    border-radius: 4px; /* Arrondi de la barre */
+}
+
+.home-container-scrollable::-webkit-scrollbar-track {
+    background: #333; /* Couleur de l’arrière-plan de la scrollbar */
+    border-radius: 4px;
+}
+
+/* Style de la scrollbar pour Firefox */
+.home-container-scrollable {
+    scrollbar-width: thin; /* Réduit la largeur de la scrollbar */
+    scrollbar-color: #ff0000 #333; /* couleur de la barre et du fond */
+}

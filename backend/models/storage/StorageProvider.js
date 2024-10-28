@@ -76,7 +76,7 @@ class StorageProvider {
     getGamesByUsername(username) {
         const content = this.getContent();
 
-        return content.games.filter(game => game.winnerUsername === username || game.loserUsername === username);
+        return content.games.filter(game => game.winnerUsername === username || game.loserUsername === username || game.username === username);
     }
 }
 
