@@ -2,7 +2,7 @@
 
 const MultiGame = require('../models/game/multiGame');
 const Player = require('../models/player');
-
+const GravityGame = require('../models/game/GravityGame');
 /**
  * Manages WebSocket connections for the multiplayer mode of the Tetris game using Socket.IO.
  * This module handles player connections, room creation, game start, and in-game events such as player moves.
@@ -11,7 +11,10 @@ const Player = require('../models/player');
  */
 module.exports = (io) => {
     // Store all game rooms by room ID
-    const rooms = {};
+    const rooms = {
+        CLASSIC: {},
+        GRAVITY: {}
+    };
 
     /**
      * Event triggered when a new client connects.
@@ -34,16 +37,20 @@ module.exports = (io) => {
          * @param {string} data.requestedRoom - The ID of the room the player wants to join.
          */
         socket.on('joinMultiGame', (data) => {
-            const { playerName, requestedRoom } = data;
+            const { playerName, requestedRoom, gamemode } = data;
             console.log('joinMultiGame data: ', data);
 
-            // Create room if it doesn't exist
-            if (!rooms[requestedRoom]) {
-                rooms[requestedRoom] = new MultiGame(requestedRoom);
-                console.log(`Room ${requestedRoom} created.`);
+            if (!rooms[gamemode][requestedRoom]) {
+                if (gamemode === "CLASSIC") {
+                    rooms[gamemode][requestedRoom] = new MultiGame(requestedRoom);
+                } else if (gamemode === "GRAVITY") {
+                    rooms[gamemode][requestedRoom] = new GravityGame(requestedRoom);
+                }
+                console.log(`Room ${requestedRoom} created for game mode ${gamemode}.`);
             }
-
-            game = rooms[requestedRoom];
+        
+            game = rooms[gamemode][requestedRoom];
+            
             player = new Player(socket.id, playerName, true);
 
             // Assign the player as the room owner if no owner exists
@@ -76,7 +83,7 @@ module.exports = (io) => {
             socket.on('launchGame', () => {
                 if (game.owner !== null && game.opponent !== null) {
 
-                    game.distributePieces();
+                game.distributePieces();
                     
                 game.startGameLoop(io);
                     try {
@@ -90,6 +97,8 @@ module.exports = (io) => {
                     }
                 }
             });
+
+
 
             /**
              * Event triggered when a player moves a piece.

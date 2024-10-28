@@ -8,6 +8,7 @@ import "./MultiGame.css";
 import { UserContext } from '../../Context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import AppButton from '../../components/App-Button/AppButton';
+import { GamemodeContext } from '../../Context/GamemodeContext';
 
 function MultiGame() {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ function MultiGame() {
   const apiUrl = process.env.REACT_APP_API_URL;  // Get the API URL from environment variables
   const [isPlayButtonDisplayed, setIsPlayButtonDisplayed] = useState(true);  // State to display the play button
   const blockDropSound = useRef(null);  // Ref to store the block drop sound
-
+  const { gamemode } = useContext(GamemodeContext);
 
   useEffect(() => {
     blockDropSound.current = new Audio('/bloc.mp3');
@@ -78,7 +79,7 @@ function MultiGame() {
   useEffect(() => {
     if (socket && roomName) {
       // Join the multiplayer game room
-      socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomName });
+      socket.emit('joinMultiGame', { playerName: username, requestedRoom: roomName, gamemode: gamemode });
 
       socket.on('init', (data) => {
         setGrid(data.grid);  // Initialize the player's grid

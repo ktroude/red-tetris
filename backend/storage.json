@@ -161,6 +161,12 @@
       "score": 120,
       "username": "Player1",
       "gameType": "SOLO"
+    },
+    {
+      "id": 1730137391611,
+      "winnerUsername": "11",
+      "loserUsername": "22",
+      "gameType": "MULTI"
     }
   ]
 }

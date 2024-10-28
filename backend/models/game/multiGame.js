@@ -53,7 +53,7 @@ class MultiGame {
     removeOwner() {
         this.owner = null;
     }
-
+    
     /**
      * Starts the game loop for the current multiplayer game.
      * This function handles the core game logic, including moving pieces, clearing lines,

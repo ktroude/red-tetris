@@ -3,6 +3,7 @@ import AppButton from '../../components/App-Button/AppButton';
 import AppInput from '../../components/App-Input/AppInput';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../Context/UserContext';
+import { GamemodeContext } from '../../Context/GamemodeContext';
 import './Home.css';
 import TetrisBackground from '../../components/Tetris-Background.js/TetrisBackground';
 
@@ -12,6 +13,10 @@ function Home() {
     const navigate = useNavigate();
     const { username } = useContext(UserContext);
     const [isError, setIsError] = useState(false);
+    const {gamemode, setGamemode, GamemodeType} = useContext(GamemodeContext);
+
+
+    console.log(GamemodeType);
 
     const handleInputChange = (setterFunction, event) => {
         setterFunction(event.target.value);
@@ -76,11 +81,28 @@ function Home() {
                             onChange={(event) => handleInputChange(setRoomName, event)}
                             onKeyDown={handleKeyDown}
                         />
+                        <p className="white-text">Select a gamemode</p>
+                         <div className="display-flex-row">
+                            {GamemodeType &&
+                                GamemodeType.map((type) => {
+                                    const isSelected = gamemode === type; // Vérifie si le mode de jeu est sélectionné
+                                    return (
+                                        <AppButton
+                                            key={type}
+                                            onClick={() => setGamemode(type)} // Met à jour le mode de jeu dans le contexte
+                                            classe={isSelected ? 'selected-gamemode' : ''} // Applique une classe CSS si sélectionné
+                                        >
+                                            {type}
+                                        </AppButton>
+                                    );
+                                })
+                            }
+                        </div>
                         <div className="display-flex-row">
-                        <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
+                            <AppButton onClick={() => navigateToMulti(roomName)}>PLAY</AppButton>
                             <AppButton onClick={() => setIsMultiChoosen(false)}>BACK</AppButton>
-                    </div>
-                    {isError && <p className="error-message">Error: Username must be 2-15 characters long and contain only alphanumeric characters.</p>}
+                        </div>
+                        {isError && <p className="error-message">Error: Username must be 2-15 characters long and contain only alphanumeric characters.</p>}
                     </>
                 )}
             </div>

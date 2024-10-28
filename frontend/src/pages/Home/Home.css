@@ -37,4 +37,17 @@
 .display-flex-row{
     display: flex;
     flex-direction: row;
+    gap: 20px;
+}
+
+.white-text {
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    z-index: 100;
+}
+
+.selected-gamemode {
+    background-color: #4CAF50 !important; /* Couleur verte pour le bouton sélectionné */
+    color: white !important; /* Couleur du texte */
+    border: 2px solid #3E8E41 !important; /* Bordure plus foncée */
 }

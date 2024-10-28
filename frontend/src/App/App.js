@@ -10,6 +10,7 @@ import { useState } from 'react';
 import Header from '../components/Header/Header'; // Importer le Header ici
 import 'font-awesome/css/font-awesome.min.css';
 import History from '../pages/History/History';
+import { GamemodeProvider } from '../Context/GamemodeContext';
 
 function App() {
   const [musicRef, setMusicRef] = useState(null); // Pour garder la référence à la musique
@@ -17,15 +18,17 @@ function App() {
   return (
     <Router>
       <UserProvider>
-        <BackgroundMusic setMusicRef={setMusicRef} /> {/* Passer la fonction de set */}
-        <Header musicRef={musicRef} isLogin={window.location.pathname === '/'} /> {/* Passer la référence de la musique et l'état de connexion */}
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/home" element={<ProtectedRoute element={Home} />} />
-          <Route path="/solo/:username" element={<ProtectedRoute element={SoloGame} />} />
-          <Route path="/multi/:roomName/:username" element={<ProtectedRoute element={MultiGame} />} />
-          <Route path="/history/:username" element={<ProtectedRoute element={History} />}/>
-        </Routes>
+        <GamemodeProvider>
+          <BackgroundMusic setMusicRef={setMusicRef} /> {/* Passer la fonction de set */}
+          <Header musicRef={musicRef} isLogin={window.location.pathname === '/'} /> {/* Passer la référence de la musique et l'état de connexion */}
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/home" element={<ProtectedRoute element={Home} />} />
+            <Route path="/solo/:username" element={<ProtectedRoute element={SoloGame} />} />
+            <Route path="/multi/:roomName/:username" element={<ProtectedRoute element={MultiGame} />} />
+            <Route path="/history/:username" element={<ProtectedRoute element={History} />}/>
+          </Routes>
+        </GamemodeProvider>
       </UserProvider>
     </Router>
   );
