@@ -139,6 +139,9 @@ module.exports = (io) => {
 
                     if (game instanceof InvisibleGame && result.reachBottom)
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
+                    else if (game instanceof InvisibleGame === false) {
+                        io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
+                    }
                     io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
                 }
 
@@ -150,7 +153,9 @@ module.exports = (io) => {
 
                     if (game instanceof InvisibleGame && result.reachBottom)
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
-                    
+                    else if (game instanceof InvisibleGame === false) {
+                        io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
+                    }
                     io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectraGrid });
                 }
 

@@ -209,6 +209,12 @@
       "winnerUsername": "11",
       "loserUsername": "22",
       "gameType": "GRAVITY"
+    },
+    {
+      "id": 1730220331749,
+      "winnerUsername": "22",
+      "loserUsername": "11",
+      "gameType": "GRAVITY"
     }
   ]
 }
