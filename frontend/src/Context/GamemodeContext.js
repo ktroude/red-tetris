@@ -5,7 +5,7 @@ export const GamemodeContext = createContext();
 export const GamemodeProvider = ({ children }) => {
     const [gamemode, setGamemode] = useState("CLASSIC");
 
-    const GamemodeType = ["CLASSIC", "GRAVITY"];
+    const GamemodeType = ["CLASSIC", "GRAVITY", "INVISIBLE"];
 
     return (
         <GamemodeContext.Provider value={{ gamemode, setGamemode, GamemodeType }}>

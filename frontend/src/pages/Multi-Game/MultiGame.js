@@ -226,10 +226,6 @@ function MultiGame() {
             {(isPlayButtonDisplayed && isOwner) && 
               <div className="play-button">
                 <AppButton classe={'litle'}  onClick={handleStartGame}>Play</AppButton>
-                { gameOver && 
-                  <AppButton onClick={() => navigate('/home')}>GO BACK</AppButton>
-                }
-
               </div>
             }  
           </div>

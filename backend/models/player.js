@@ -71,7 +71,7 @@ class Player {
         if (!this.currentPiece) {
             this.spectraGrid = this.grid.map(row => [...row]);
             // this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);
-            return { gameover: false, linesCleared: 0 };
+            return { gameover: false, linesCleared: 0, reachBottom: false };
         }
 
         let piece = this.currentPiece;
@@ -109,7 +109,7 @@ class Player {
                 this.spectraGrid = this.grid.map(row => [...row]);
                 this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);
                 this.generateNewPiece();
-                return { gameover: this.checkGameOver(), linesCleared: linesCleared };
+                return { gameover: this.checkGameOver(), linesCleared: linesCleared, reachBottom: true };
         }
 
         // Validate the new position for other directions
@@ -124,12 +124,12 @@ class Player {
                 this.spectraGrid = this.grid.map(row => [...row]);
                 this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);        
                 this.generateNewPiece();
-                return { gameover: this.checkGameOver(), linesCleared: linesCleared };
+                return { gameover: this.checkGameOver(), linesCleared: linesCleared, reachBottom: true };
             }
         }
         this.spectraGrid = this.grid.map(row => [...row]);
         this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);
-        return { gameover: false, linesCleared: 0 };
+        return { gameover: false, linesCleared: 0, reachBottom: false };
     }
 
     /**

@@ -3,6 +3,7 @@
 const MultiGame = require('../models/game/multiGame');
 const Player = require('../models/player');
 const GravityGame = require('../models/game/GravityGame');
+const InvisibleGame = require('../models/game/InvisibleGame');
 /**
  * Manages WebSocket connections for the multiplayer mode of the Tetris game using Socket.IO.
  * This module handles player connections, room creation, game start, and in-game events such as player moves.
@@ -13,7 +14,8 @@ module.exports = (io) => {
     // Store all game rooms by room ID
     const rooms = {
         CLASSIC: {},
-        GRAVITY: {}
+        GRAVITY: {},
+        INVISIBLE: {}
     };
 
     /**
@@ -45,6 +47,9 @@ module.exports = (io) => {
                     rooms[gamemode][requestedRoom] = new MultiGame(requestedRoom);
                 } else if (gamemode === "GRAVITY") {
                     rooms[gamemode][requestedRoom] = new GravityGame(requestedRoom);
+                }
+                else if (gamemode === "INVISIBLE") {
+                    rooms[gamemode][requestedRoom] = new InvisibleGame(requestedRoom);
                 }
                 console.log(`Room ${requestedRoom} created for game mode ${gamemode}.`);
             }
@@ -131,8 +136,10 @@ module.exports = (io) => {
                         game.freezeLinesGrid(linesCleared - 1, game.opponent.grid);
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
+
+                    if (game instanceof InvisibleGame && result.reachBottom)
+                        io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
-                    io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                 }
 
                 if (player.id === game.opponent.id) {
@@ -141,8 +148,10 @@ module.exports = (io) => {
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
 
+                    if (game instanceof InvisibleGame && result.reachBottom)
+                        io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
+                    
                     io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectraGrid });
-                    io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                 }
 
                     // Send the next piece to the current player
