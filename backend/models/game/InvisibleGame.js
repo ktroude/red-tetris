@@ -50,7 +50,7 @@ class InvisibleGame extends MultiGame {
                     io.to(this.opponent.id).emit('win');
                     clearInterval();
                     this.isRunning = false;
-                    new StorageProvider().addMutliGame(this.opponent.name, this.owner.name);
+                    new StorageProvider().addGamemodeGame(this.opponent.name, this.owner.name, "INVISIBLE");
                     return;
                 }
                 if (opponentIsGameOver) {
@@ -59,7 +59,7 @@ class InvisibleGame extends MultiGame {
                     io.to(this.owner.id).emit('win');
                     clearInterval();
                     
-                    new StorageProvider().addMutliGame(this.owner.name, this.opponent.name);
+                    new StorageProvider().addGamemodeGame(this.owner.name, this.opponent.name, "INVISIBLE");
                     
                     this.isRunning = false;
                     return;

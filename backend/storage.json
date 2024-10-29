@@ -173,6 +173,42 @@
       "winnerUsername": "11",
       "loserUsername": "22",
       "gameType": "MULTI"
+    },
+    {
+      "id": 1730211323973,
+      "score": 16690,
+      "username": "11",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1730211744451,
+      "winnerUsername": "11",
+      "loserUsername": "22",
+      "gameType": "GRAVITY"
+    },
+    {
+      "id": 1730211756114,
+      "winnerUsername": "22",
+      "loserUsername": "11",
+      "gameType": "GRAVITY"
+    },
+    {
+      "id": 1730211765479,
+      "winnerUsername": "11",
+      "loserUsername": "22",
+      "gameType": "GRAVITY"
+    },
+    {
+      "id": 1730211848285,
+      "winnerUsername": "11",
+      "loserUsername": "22",
+      "gameType": "GRAVITY"
+    },
+    {
+      "id": 1730211883811,
+      "winnerUsername": "11",
+      "loserUsername": "22",
+      "gameType": "GRAVITY"
     }
   ]
 }

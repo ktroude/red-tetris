@@ -11,7 +11,7 @@ class GravityGame extends MultiGame {
      */
     constructor() {
         super();
-        this.intervalTime = 300;
+        this.intervalTime = 500;
     }
 
     startGameLoop(io) {
@@ -55,7 +55,7 @@ class GravityGame extends MultiGame {
                     io.to(this.opponent.id).emit('win');
                     clearInterval();
                     this.isRunning = false;
-                    new StorageProvider().addMutliGame(this.opponent.name, this.owner.name);
+                    new StorageProvider().addGamemodeGame(this.opponent.name, this.owner.name, "GRAVITY");
                     return;
                 }
                 if (opponentIsGameOver) {
@@ -64,8 +64,8 @@ class GravityGame extends MultiGame {
                     io.to(this.owner.id).emit('win');
                     clearInterval();
                     
-                    new StorageProvider().addMutliGame(this.owner.name, this.opponent.name);
-                    
+                    new StorageProvider().addGamemodeGame(this.owner.name, this.opponent.name, "GRAVITY");
+
                     this.isRunning = false;
                     return;
                 }

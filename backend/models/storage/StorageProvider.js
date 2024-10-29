@@ -2,7 +2,9 @@ const fs = require("fs");
 
 const GameType = {
     SOLO: 'SOLO',
-    MULTI: 'MULTI'
+    MULTI: 'MULTI',
+    GRAVITY: 'GRAVITY',
+    INVISIBLE: 'INVISIBLE'
 };
 
 class StorageProvider {
@@ -41,6 +43,20 @@ class StorageProvider {
             winnerUsername,
             loserUsername,
             gameType : GameType.MULTI
+        };
+        content.games.push(newGame);
+        this.saveContent(content);
+        return newGame; // Renvoie le nouvel objet pour confirmation
+    }
+
+    addGamemodeGame(winnerUsername, loserUsername, GamemodeType)
+    {
+        const content = this.getContent();
+        const newGame = {
+            id: Date.now(), // Utilise le timestamp comme ID unique
+            winnerUsername,
+            loserUsername,
+            gameType : GamemodeType
         };
         content.games.push(newGame);
         this.saveContent(content);
