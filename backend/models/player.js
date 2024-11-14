@@ -197,6 +197,10 @@ class Player {
         const startX = piece.x; // Position X de la pièce dans la grille
         const startY = piece.y; // Position Y de la pièce dans la grille
     
+        if (matrix == null) {
+            return grid;
+        }
+
         return grid.map((row, r) =>
             row.map((cell, c) => {
                 // Vérifier si la cellule appartient à la pièce

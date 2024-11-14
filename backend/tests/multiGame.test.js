@@ -13,7 +13,6 @@ describe('MultiGame', () => {
     let owner;
     let opponent;
     let io;
-    let player;
 
     beforeEach(() => {
         // Mock players
@@ -86,8 +85,8 @@ describe('MultiGame', () => {
         opponent.movePiece = jest.fn().mockReturnValueOnce({ gameover: false, linesCleared: 2 });
 
         // Start the game loop
-        multiGame.startGameLoop(io, owner);
-        multiGame.startGameLoop(io, opponent);
+        multiGame.distributePieces();
+        multiGame.startGameLoop(io);
 
         // Simulate the 'movePiece' event for the owner
         io.to = jest.fn().mockReturnValue({

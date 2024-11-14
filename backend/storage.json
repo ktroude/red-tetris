@@ -317,6 +317,284 @@
       "winnerUsername": "cew",
       "loserUsername": "ew",
       "gameType": "MULTI"
+    },
+    {
+      "id": 1731587328799,
+      "score": 120,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587329798,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587330798,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587706954,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587707954,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587706010,
+      "score": 110,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587749230,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587750230,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731587748322,
+      "score": 110,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588056014,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588057014,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588055148,
+      "score": 120,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588192878,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588193878,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588192016,
+      "score": 120,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588335248,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588336248,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588334287,
+      "score": 110,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588439870,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588440870,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588438982,
+      "score": 120,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588533148,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588534148,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588532219,
+      "score": 100,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588596010,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588597010,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588595055,
+      "score": 100,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588705016,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588706016,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588704137,
+      "score": 110,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588784784,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588785784,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588783845,
+      "score": 110,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588839179,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588840179,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588838281,
+      "score": 110,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588863980,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588864980,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731588863071,
+      "score": 120,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589048454,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589049454,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589047575,
+      "score": 110,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589116670,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589117670,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589115795,
+      "score": 100,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589179075,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589180075,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589178188,
+      "score": 120,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589271390,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589272390,
+      "score": 0,
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589270531,
+      "score": 120,
+      "username": "Player1",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731589273138,
+      "winnerUsername": "opponent",
+      "loserUsername": "owner",
+      "gameType": "MULTI"
     }
   ]
 }

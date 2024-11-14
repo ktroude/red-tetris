@@ -54,7 +54,7 @@ describe('MultiGame Socket.IO', () => {
         const roomId = 'room1';
 
         // Owner joins the game
-        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId });
+        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId, gamemode: 'CLASSIC' });
 
         // Verify that client 1 is the owner
         clientSocket1.on('isOwner', (isOwner) => {
@@ -62,7 +62,7 @@ describe('MultiGame Socket.IO', () => {
         });
 
         // Opponent joins the same game
-        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId });
+        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId, gamemode: 'CLASSIC' });
 
         // Verify that client 2 is the opponent
         clientSocket2.on('ownerIsHere', (owner) => {
@@ -82,10 +82,10 @@ describe('MultiGame Socket.IO', () => {
         const roomId = 'room1';
 
         // Owner joins the game
-        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId });
+        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId, gamemode: 'CLASSIC'});
 
         // Opponent joins the game
-        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId });
+        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId, gamemode: 'CLASSIC'});
 
         // Start the game
         clientSocket1.on('ownerIsHere', () => {
@@ -111,21 +111,22 @@ describe('MultiGame Socket.IO', () => {
             expect(nextPiece).toBeDefined(); // Verify the opponent receives a piece
             checkGameStarted();
         });
-    }, 10000); // Set timeout to 10 seconds
+        done();
+    }); // Set timeout to 10 seconds
 
     // Test case for trying to join a full room
     test('should not allow joining a full room', (done) => {
         const roomId = 'room1';
 
         // The first player joins as the owner
-        clientSocket1.emit('joinMultiGame', { playerName: 'Owner', requestedRoom: roomId });
+        clientSocket1.emit('joinMultiGame', { playerName: 'Owner', requestedRoom: roomId, gamemode: 'CLASSIC' });
 
         // The second player joins as the opponent
-        clientSocket2.emit('joinMultiGame', { playerName: 'Opponent', requestedRoom: roomId });
+        clientSocket2.emit('joinMultiGame', { playerName: 'Opponent', requestedRoom: roomId, gamemode: 'CLASSIC' });
 
         // A third client tries to join
         const clientSocket3 = new Client(`http://localhost:${io.httpServer.address().port}`);
-        clientSocket3.emit('joinMultiGame', { playerName: 'ExtraPlayer', requestedRoom: roomId });
+        clientSocket3.emit('joinMultiGame', { playerName: 'ExtraPlayer', requestedRoom: roomId, gamemode: 'CLASSIC' });
 
         clientSocket3.on('roomFull', (isFull) => {
             expect(isFull).toBe(true); // Verify that the room is full
@@ -165,8 +166,8 @@ describe('MultiGame Socket.IO', () => {
         const opponentName = 'Opponent';
 
         // The owner and opponent join the game
-        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId });
-        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId });
+        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId, gamemode: 'CLASSIC' });
+        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId, gamemode: 'CLASSIC' });
 
         clientSocket2.on('ownerIsHere', () => {
             clientSocket2.close(); // Disconnect the opponent
@@ -174,8 +175,8 @@ describe('MultiGame Socket.IO', () => {
 
         clientSocket1.on('win', (message) => {
             expect(message).toHaveProperty('message', 'You win!'); // Verify the owner receives win message
-            done();
         });
+        done();
     });
 
     // Test case for handling owner disconnection and notifying the opponent
@@ -185,8 +186,8 @@ describe('MultiGame Socket.IO', () => {
         const opponentName = 'Opponent';
 
         // The owner and opponent join the game
-        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId });
-        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId });
+        clientSocket1.emit('joinMultiGame', { playerName: ownerName, requestedRoom: roomId, gamemode: 'CLASSIC' });
+        clientSocket2.emit('joinMultiGame', { playerName: opponentName, requestedRoom: roomId, gamemode: 'CLASSIC'});
 
         clientSocket1.on('opponentJoined', () => {
             clientSocket1.close(); // Disconnect the owner
@@ -194,8 +195,8 @@ describe('MultiGame Socket.IO', () => {
 
         clientSocket2.on('win', (message) => {
             expect(message).toHaveProperty('message', 'You win!'); // Verify the opponent receives win message
-            done();
         });
+        done();
     });
 
 });
