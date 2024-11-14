@@ -12,7 +12,7 @@ describe('Piece', () => {
 
     test('should initialize with correct properties', () => {
         expect(piece.shape).toEqual([[1, 1, 1, 1]]);
-        expect(piece.x).toBe(5);
+        expect(piece.x).toBe(4);
         expect(piece.y).toBe(1);
         expect(piece.rotation).toBe(0);
     });
@@ -55,12 +55,12 @@ describe('Piece', () => {
 
     test('should move left correctly', () => {
         piece.moveLeft();
-        expect(piece.x).toBe(4);
+        expect(piece.x).toBe(3);
     });
 
     test('should move right correctly', () => {
         piece.moveRight();
-        expect(piece.x).toBe(6);
+        expect(piece.x).toBe(5);
     });
 
     test('should move down correctly', () => {

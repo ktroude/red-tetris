@@ -9,8 +9,8 @@ class GravityGame extends MultiGame {
     /**
      *
      */
-    constructor() {
-        super();
+    constructor(roomId) {
+        super(roomId);
         this.intervalTime = 500;
     }
 

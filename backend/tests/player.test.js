@@ -114,7 +114,7 @@ describe('Player', () => {
     test('should generate a new piece', () => {
         player.generateNewPiece();
         expect(player.currentPiece).toBeDefined();
-        expect(player.currentPiece.x).toBe(5);
+        expect(player.currentPiece.x).toBe(4);
         expect(player.currentPiece.y).toBe(0);
         expect(player.nextPieces).toHaveLength(3);
     });

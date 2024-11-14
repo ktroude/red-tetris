@@ -9,8 +9,8 @@ class InvisibleGame extends MultiGame {
     /**
      *
      */
-    constructor() {
-        super();
+    constructor(roomId) {
+        super(roomId);
         this.intervalTime = 300;
         this.previousOwnerGrid = [];
     }
