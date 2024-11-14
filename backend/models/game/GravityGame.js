@@ -44,8 +44,8 @@ class GravityGame extends MultiGame {
 
                     io.to(this.owner.id).emit('updateGrid', { grid: this.owner.grid });
                     io.to(this.opponent.id).emit('updateGrid', { grid: this.opponent.grid });
-                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.spectraGrid });
-                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.spectraGrid });
+                    io.to(this.owner.id).emit('opponentUpdateGrid', { grid: this.opponent.getSpectra() });
+                    io.to(this.opponent.id).emit('opponentUpdateGrid', { grid: this.owner.getSpectra() });
 
                 // Handle gameover logic
                 if (ownerIsGameOver) {

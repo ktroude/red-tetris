@@ -70,7 +70,6 @@ class Player {
     movePiece(direction) {
         if (!this.currentPiece) {
             this.spectraGrid = this.grid.map(row => [...row]);
-            // this.spectraGrid = this.removeFloatingBlock(this.spectraGrid, this.currentPiece);
             return { gameover: false, linesCleared: 0, reachBottom: false };
         }
 
@@ -298,6 +297,31 @@ class Player {
             }
         }
         return false;
+    }
+
+    getSpectra() {
+
+        const fillColumn = (array, x, y) => {
+
+            for (let i = y; i < array.length; i++)
+            {
+                array[i][x] = 9;
+            }
+            return array;
+        }
+
+        let spectra = this.grid;
+        spectra = this.removeFloatingBlock(spectra, this.currentPiece);
+
+        for (let i = 0; i < spectra.length; i++) {
+            for (let j = 0; j < spectra[i].length; j++) {
+                if (spectra[i][j] > 0) {
+                    spectra = fillColumn(spectra, j, i);
+                }
+            }
+        }
+
+        return spectra;
     }
 }
 

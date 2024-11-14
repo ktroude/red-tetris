@@ -215,6 +215,42 @@
       "winnerUsername": "22",
       "loserUsername": "11",
       "gameType": "GRAVITY"
+    },
+    {
+      "id": 1731581336364,
+      "score": 100,
+      "username": "dw",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731581380232,
+      "score": 140,
+      "username": "cdw",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731581455705,
+      "score": 110,
+      "username": "dw",
+      "gameType": "SOLO"
+    },
+    {
+      "id": 1731581617306,
+      "winnerUsername": "wf",
+      "loserUsername": "refg",
+      "gameType": "INVISIBLE"
+    },
+    {
+      "id": 1731583069183,
+      "winnerUsername": "efw",
+      "loserUsername": "dw",
+      "gameType": "MULTI"
+    },
+    {
+      "id": 1731583161029,
+      "winnerUsername": "few",
+      "loserUsername": "few",
+      "gameType": "MULTI"
     }
   ]
 }

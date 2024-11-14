@@ -142,7 +142,7 @@ module.exports = (io) => {
                     else if (game instanceof InvisibleGame === false) {
                         io.to(game.owner.id).emit('updateGrid', { grid: game.owner.grid });
                     }
-                    io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.spectraGrid });
+                    io.to(game.opponent.id).emit('opponentUpdateGrid', { grid: game.owner.getSpectra() });
                 }
 
                 if (player.id === game.opponent.id) {
@@ -156,7 +156,7 @@ module.exports = (io) => {
                     else if (game instanceof InvisibleGame === false) {
                         io.to(game.opponent.id).emit('updateGrid', { grid: game.opponent.grid });
                     }
-                    io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.spectraGrid });
+                    io.to(game.owner.id).emit('opponentUpdateGrid', { grid: game.opponent.getSpectra() });
                 }
 
                     // Send the next piece to the current player
