@@ -87,19 +87,18 @@ module.exports = (io) => {
             // Notify both players when the game is ready
             socket.on('launchGame', () => {
                 if (game.owner !== null && game.opponent !== null) {
-
-                game.distributePieces();
-                    
-                game.startGameLoop(io);
-                    try {
-                        io.to(game.opponent.id).emit('restart');
-                        io.to(game.owner.id).emit('restart');
-                    if (player.nextPieces.length > 0)
+                    game.distributePieces();
+                    game.startGameLoop(io);
+                        try {
+                            io.to(game.opponent.id).emit('restart');
+                            io.to(game.owner.id).emit('restart');
+                        if (player.nextPieces.length > 0) {
                             io.to(game.opponent.id).emit('nextPiece', { nextPiece: game.opponent.nextPieces[0].shape });
-                        io.to(game.owner.id).emit('nextPiece', { nextPiece: game.owner.nextPieces[0].shape });
-                } catch (e) {
-                        console.error('Error sending next piece:', e);
-                    }
+                            io.to(game.owner.id).emit('nextPiece', { nextPiece: game.owner.nextPieces[0].shape });
+                        }
+                    } catch (e) {
+                            console.error('Error sending next piece:', e);
+                        }
                 }
             });
 

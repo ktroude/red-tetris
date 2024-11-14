@@ -182,7 +182,6 @@ class MultiGame {
 
     clearInterval() {
         clearInterval(this.gameLoopInterval);  // Stop the loop
-        clearInterval(this.gameLoopInterval);  // Stop the loop
         this.gameLoopInterval = null;
         console.log('Game loop stopped');
     }

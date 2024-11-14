@@ -10,7 +10,7 @@ class Piece {
      */
     constructor(shape) {
         this.shape = shape; // The shape of the piece (2D matrix)
-        this.x = 5; // Horizontal position of the piece (starting in the middle of the grid)
+        this.x = 4; // Horizontal position of the piece (starting in the middle of the grid)
         this.y = 1; // Vertical position of the piece (slightly below the top)
         this.rotation = 0; // Rotation index (0 to 3, representing four possible rotations)
     }

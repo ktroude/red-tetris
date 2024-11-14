@@ -271,7 +271,7 @@ class Player {
      */
     generateNewPiece() {
         this.currentPiece = this.nextPieces.shift();
-        this.currentPiece.x = 5;
+        this.currentPiece.x = 4;
         this.currentPiece.y = 0;
 
         if (!this.isMulti) {
@@ -300,7 +300,6 @@ class Player {
     }
 
     getSpectra() {
-
         const fillColumn = (array, x, y) => {
 
             for (let i = y; i < array.length; i++)
